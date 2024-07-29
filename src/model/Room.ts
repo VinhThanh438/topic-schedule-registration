@@ -12,7 +12,7 @@ interface IRoom extends Document {
     mod_id: Schema.Types.ObjectId
     user_id: Schema.Types.ObjectId
     // end_time: Date
-    status: string // confirmed, in progress, canceled
+    status: string // pending, confirmed, in progress, canceled
 
     transform(): IRoomResponse
 }

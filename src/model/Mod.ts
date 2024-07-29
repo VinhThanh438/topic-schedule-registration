@@ -8,7 +8,6 @@ interface IMod extends Document {
 
 const ModSchema: Schema<IMod> = new Schema(
     {
-        // mod_id: { type: Schema.Types.ObjectId, require: true},
         mod_name: { type: String, require: true, default: null },
         state: { type: String, require: true, default: null },
     },

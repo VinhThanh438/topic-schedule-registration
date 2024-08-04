@@ -1,12 +1,31 @@
-import express from 'express'
-import { ConnectDB } from './config/db'
+import express, { Request, Response } from 'express'
+import { ConnectDB } from './config/db';
+import Mod from './model/Mod';
+import Room from './model/Room';
+import User from './model/User';
 
-const app = express()
+ConnectDB.connect()
 
-ConnectDB.connect().then(() => {
-    console.log('oke')
-}).catch((error) => {
-    console.log(error)
+const app = express();
+app.use(express.json());
+
+app.get('/mod',async(req: Request, res: Response) => {
+  await Mod.create(new Mod({
+    mod_name: 'vinh',
+    state: 'busy'
+  }))
+  const data = await Mod.find({})
+  res.send(data)
 })
 
-app.listen(3000, () => console.log('app listening on port 3000'))
+app.get('/user',async(req: Request, res: Response) => {
+  await User.create(new User({
+    user_name: 'noob'
+  }))
+  const data = await User.find({})
+  res.send(data)
+})
+
+app.listen(3000, () => {
+  console.log('Server started on port 3000');
+});

@@ -26,7 +26,7 @@ const RoomSchema: Schema<IRoom> = new Schema(
         user_id: { type: Schema.Types.ObjectId },
         start_time: { type: Date },
         end_time: { type: Date },
-        status: { type: String, required: true, default: 'booked' }, 
+        status: { type: String, required: true, default: 'booked' },
     },
     {
         timestamps: {

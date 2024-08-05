@@ -27,13 +27,11 @@ const AvailableTimeSchema: Schema<IAvailableTimeSchema> = new Schema({
     time: { type: Date, required: true },
 });
 
-const ModSchema: Schema<IMod> = new Schema(
-    {
-        mod_name: { type: String, require: true },
-        status: { type: String, require: true, default: 'offline' },
-        available_time: [AvailableTimeSchema],
-    },
-);
+const ModSchema: Schema<IMod> = new Schema({
+    mod_name: { type: String, require: true },
+    status: { type: String, require: true, default: 'offline' },
+    available_time: [AvailableTimeSchema],
+});
 
 ModSchema.method({
     transform(): IModResponse {

@@ -1,3 +1,3 @@
 export interface IUserCreate {
-    user_name: string
+    user_name: string;
 }

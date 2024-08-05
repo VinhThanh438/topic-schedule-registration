@@ -1,6 +1,7 @@
 import { Schema, model, Document } from 'mongoose';
 
 interface IAvailableTimeSchema extends Document {
+    _id: Schema.Types.ObjectId
     time: Date;
 }
 
@@ -12,7 +13,16 @@ interface IModResponse {
     }[];
 }
 
-interface IMod extends Document {
+// morning (M): 8 - 11
+// afternoon (A): 14 - 17
+// evening (E): 19 - 22
+// 7 types: M, A, E, MA, ME, AE, ALL
+// Input values: {
+//  mod_id: 
+//  time :
+//  type: (M, A, E, MA, ME, AE, ALL)
+//}
+export interface IMod extends Document {
     _id: Schema.Types.ObjectId;
     mod_name: string;
     status: string; // available, busy, offline
@@ -38,7 +48,11 @@ ModSchema.method({
         const transformed: IModResponse = {
             mod_id: this._id.toHexString(),
             mod_name: this.mod_name,
-            available_time: this.available_time,
+            available_time: [
+                {
+                    time: new Date(this.time)
+                }
+            ],
         };
         return transformed;
     },

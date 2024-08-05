@@ -8,8 +8,8 @@ interface IMod extends Document {
 
 const ModSchema: Schema<IMod> = new Schema(
     {
-        mod_name: { type: String, require: true, default: null },
-        state: { type: String, require: true, default: null },
+        mod_name: { type: String, require: true },
+        state: { type: String, require: true, default: 'offline' },
     },
     {
         timestamps: {

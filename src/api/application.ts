@@ -6,7 +6,7 @@ import { ConnectRedis } from '@common/infrastructure/redis.adapter';
 export class Application {
     public static async createApp(): Promise<ExpressServer> {
         await ConnectDB.connect();
-        await ConnectRedis.connect();
+        // await ConnectRedis.connect();
 
         this.registerEvent();
 

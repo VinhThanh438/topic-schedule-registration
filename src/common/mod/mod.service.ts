@@ -1,3 +1,4 @@
+import { GenerateTime } from '@common/utils/generate-time';
 import { IModCreate, IModScheduling } from './mod.interface';
 import Mod, { IMod } from './Mod.model';
 
@@ -14,20 +15,25 @@ export class ModService {
         }
     }
 
-    static async modScheduling(req: IModScheduling): Promise<IModScheduling> {
+    static async modScheduling(req: IModScheduling): Promise<IMod> {
         try {
-            // const modData = await Mod.findById(req.mod_id)
-            // const newData = req.available_time
+            new GenerateTime(req.type, new Date(req.date))
+            const gen = GenerateTime.generate()
+            
+            console.log(gen)
+            const modData = await Mod.findById(req.mod_id)
+            
+            gen.forEach(time => {
+                modData.available_time.push(time)
+            });
 
-            // newData.forEach(time => {
-            //     modData.available_time.push(time)
-            // });
-
-            // await modData.save()
-
-            return req
+            console.log(modData)
+            
+            await modData.save()
+            
+            return modData;
         } catch (error) {
-            throw new Error(error.message)
+            throw new Error(error.message);
         }
     }
 }

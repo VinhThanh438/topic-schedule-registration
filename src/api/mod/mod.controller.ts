@@ -20,9 +20,9 @@ export class ModController {
 
     static async modScheduling(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
-            const body = req.body as any
+            const body = req.body as any;
 
-            const data = await ModService.modScheduling(body as IModScheduling)
+            const data = await ModService.modScheduling(body as IModScheduling);
 
             res.status(StatusCode.CREATED).json(data);
         } catch (error) {

@@ -1,7 +1,7 @@
 import { Schema, model, Document } from 'mongoose';
 
 interface IAvailableTimeSchema extends Document {
-    _id: Schema.Types.ObjectId
+    _id: Schema.Types.ObjectId;
     time: Date;
 }
 
@@ -18,7 +18,7 @@ interface IModResponse {
 // evening (E): 19 - 22
 // 7 types: M, A, E, MA, ME, AE, ALL
 // Input values: {
-//  mod_id: 
+//  mod_id:
 //  time :
 //  type: (M, A, E, MA, ME, AE, ALL)
 //}
@@ -50,8 +50,8 @@ ModSchema.method({
             mod_name: this.mod_name,
             available_time: [
                 {
-                    time: new Date(this.time)
-                }
+                    time: new Date(this.time),
+                },
             ],
         };
         return transformed;

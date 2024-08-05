@@ -4,6 +4,6 @@ const router = express.Router();
 
 router.post('/create', ModController.create);
 
-router.post('/schedule', ModController.modScheduling)
+router.post('/schedule', ModController.modScheduling);
 
 export default router;

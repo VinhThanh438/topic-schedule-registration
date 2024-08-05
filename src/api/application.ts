@@ -1,10 +1,12 @@
 import { ExpressServer } from './server';
 import { PORT } from '@config/environment';
 import { ConnectDB } from '@common/infrastructure/mongo.adapter';
+import { ConnectRedis } from '@common/infrastructure/redis.adapter';
 
 export class Application {
     public static async createApp(): Promise<ExpressServer> {
         await ConnectDB.connect();
+        await ConnectRedis.connect();
 
         this.registerEvent();
 

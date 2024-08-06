@@ -6,4 +6,8 @@ router.post('/create', ModController.create);
 
 router.post('/schedule', ModController.modScheduling);
 
+router.post('/confirm', ModController.modConfirmed);
+
+router.post('/cancel', ModController.modCanceled);
+
 export default router;

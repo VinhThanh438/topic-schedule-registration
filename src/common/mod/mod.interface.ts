@@ -10,3 +10,7 @@ export interface IModScheduling {
         time: Date;
     }[];
 }
+
+export interface IModConfirm {
+    room_id: string;
+}

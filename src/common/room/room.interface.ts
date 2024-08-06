@@ -1,7 +1,7 @@
 export interface IRoomGetByMod {
-    mod_id: string
+    mod_id: string;
 }
 
 export interface IRoomGetByUser {
-    user_id: string
+    user_id: string;
 }

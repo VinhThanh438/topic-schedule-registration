@@ -27,7 +27,7 @@ export class ModController {
             res.status(StatusCode.CREATED).json(data);
         } catch (error) {
             logger.error(error.message);
-            next(error);
+            res.status(StatusCode.REQUEST_FORBIDDEN).json({ error: error.message })
         }
     }
 }

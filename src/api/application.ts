@@ -2,6 +2,7 @@ import { ExpressServer } from './server';
 import { PORT } from '@config/environment';
 import { ConnectDB } from '@common/infrastructure/mongo.adapter';
 import { ConnectRedis } from '@common/infrastructure/redis.adapter';
+import { UserEvent } from '@common/user/user.event';
 
 export class Application {
     public static async createApp(): Promise<ExpressServer> {
@@ -16,5 +17,7 @@ export class Application {
         return expressServer;
     }
 
-    public static registerEvent() {}
+    public static registerEvent() {
+        UserEvent.register()
+    }
 }

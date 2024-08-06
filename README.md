@@ -7,7 +7,7 @@
     #Các chức năng:
 -   Hiển thị các buổi available của mod để user có thể đặt lịch lên các buổi đấy và ẩn các buổi đã đặt của user khác với mod
 -   Hiển thị các khung thời gian học trong đặt lịch sao cho một lớp diễn ra trong khoảng 30p (vd: 8h30 - 9h - 9h30 - 10h…)
--   Đặt lịch: User đặt lịch với mod, hệ thống sẽ kiểm tra số buổi học của user sau đó kiểm tra trạng thái của mod => false: return kết quả cho user. Success: hệ thống gửi yêu cầu chờ Mod xác nhận yêu cầu đặt của user và trừ đi số buổi học của user => hệ thống tự cập nhật lại available_time của mod.
+-   Đặt lịch: User đặt lịch với mod, hệ thống sẽ kiểm tra số buổi học của user => false: return kết quả cho user. Success: hệ thống gửi yêu cầu chờ Mod xác nhận yêu cầu đặt của user và trừ đi số buổi học của user => hệ thống tự cập nhật lại available_time của mod.
 -   Mod huỷ buổi học: update lại số buổi học cho người dùng
 
 ### Các trường hợp:

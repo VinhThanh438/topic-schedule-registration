@@ -1,6 +1,6 @@
 import { Schema, model, Document } from 'mongoose';
 
-interface IRoomResponse {
+export interface IRoomResponse {
     room_id: string;
     mod_id: string;
     user_id: string;
@@ -9,13 +9,13 @@ interface IRoomResponse {
     status: string;
 }
 
-interface IRoom extends Document {
+export interface IRoom extends Document {
     _id: Schema.Types.ObjectId;
     mod_id: Schema.Types.ObjectId;
     user_id: Schema.Types.ObjectId;
     start_time: Date;
     end_time: Date;
-    status: string; // booked, confirmed, in progress, canceled
+    status: string; // booked, confirmed, in progress, canceled, done
 
     transform(): IRoomResponse;
 }
@@ -30,7 +30,7 @@ const RoomSchema: Schema<IRoom> = new Schema(
     },
     {
         timestamps: {
-            createdAt: 'start_time',
+            createdAt: 'create_at',
             updatedAt: 'update_at',
         },
     },

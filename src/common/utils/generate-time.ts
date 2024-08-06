@@ -10,7 +10,7 @@ export class GenerateTime {
     static generate(): { time: Date }[] {
         const dateString = GenerateTime.date.toISOString().slice(0, 10);
         switch (GenerateTime.type) {
-            case 'M': {
+            case 'M': { // Morning
                 const result: { time: Date }[] = [];
                 for (let hour = 8; hour <= 11; hour++) {
                     for (let minute = 0; minute < 60; minute += 30) {
@@ -21,7 +21,7 @@ export class GenerateTime {
                 return result;
             }
 
-            case 'A': {
+            case 'A': { // Afternoon
                 const result: { time: Date }[] = [];
                 for (let hour = 14; hour <= 17; hour++) {
                     for (let minute = 0; minute < 60; minute += 30) {
@@ -32,7 +32,7 @@ export class GenerateTime {
                 return result;
             }
 
-            case 'E': {
+            case 'E': { // Evening
                 const result: { time: Date }[] = [];
                 for (let hour = 19; hour <= 22; hour++) {
                     for (let minute = 0; minute < 60; minute += 30) {

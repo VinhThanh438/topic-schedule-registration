@@ -1,6 +1,5 @@
 import { EVENT_ROOM_CONFIRMED } from '@common/constants/mod-event.constant';
 import eventBus from '@common/event-bus';
-import { IModConfirm } from './mod.interface';
 import logger from '@common/logger';
 import Mod from './Mod.model';
 
@@ -11,14 +10,12 @@ export class ModEvent {
 
     public static async removeAvailableTime(data: any): Promise<void> {
         try {
-            // delete available time
-            console.log(data);
+            // remove available time
             const getModData = await Mod.findOne({ _id: data.mod_id  })
-            console.log(getModData)
 
-            // getModData.available_time.forEach((e) => {
-            //     if (e.time === )
-            // })
+            const newData = getModData.available_time.filter(item => item.time !== data.time);
+
+            
         } catch (error) {
             logger.error(error.message);
         }

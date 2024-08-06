@@ -11,8 +11,8 @@
 - Mod huỷ buổi học: update lại số buổi học cho người dùng
 ### Các trường hợp:
  > VD: 
- - Mod có lịch hẹn với user1 lúc 9h => user2 không thể talk now với mod trong khoảng thời gian từ 8h30 -> 9h30 => mod status (8h30 -> 9h30 = busy)
- - Khi user đặt lịch với mod và mod chưa confirm lịch khoảng 30p trước khi buổi học bắt đầu thì lịch sẽ tự động hủy và hoàn lại buổi học cho user và thông báo cho user
+ > - Mod có lịch hẹn với user1 lúc 9h => user2 không thể talk now với mod trong khoảng thời gian từ 8h30 -> 9h30 => mod status (8h30 -> 9h30 = busy)
+ > - Khi user đặt lịch với mod và mod chưa confirm lịch khoảng 30p trước khi buổi học bắt đầu thì lịch sẽ tự động hủy và hoàn lại buổi học cho user và thông báo cho user
 ### Model:
 - [ User ]: user_id, user-name, remaining_lessions
 - [ Mod ]: mod_id, mod_name, status, available_time []

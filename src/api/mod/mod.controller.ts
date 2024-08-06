@@ -14,7 +14,7 @@ export class ModController {
             });
         } catch (error) {
             logger.error(error.message);
-            res.status(StatusCode.REQUEST_FORBIDDEN).json({ message: error.message })
+            res.status(StatusCode.REQUEST_FORBIDDEN).json({ message: error.message });
         }
     }
 
@@ -24,7 +24,7 @@ export class ModController {
 
             const data = await ModService.modScheduling(body as IModScheduling);
 
-            res.status(StatusCode.CREATED).json({message: 'success', data});
+            res.status(StatusCode.CREATED).json({ message: 'success', data });
         } catch (error) {
             logger.error(error.message);
             res.status(StatusCode.REQUEST_FORBIDDEN).json({ error: error.message });

@@ -3,11 +3,11 @@ export interface IUserCreate {
 }
 
 export interface IUserScheduling {
-    mod_id: string
-    user_id: string,
-    time_id: string
+    mod_id: string;
+    user_id: string;
+    time_id: string;
 }
 
 export interface IUserEvent {
-    user_id: string
+    user_id: string;
 }

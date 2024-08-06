@@ -18,6 +18,6 @@ export class Application {
     }
 
     public static registerEvent() {
-        UserEvent.register()
+        UserEvent.register();
     }
 }

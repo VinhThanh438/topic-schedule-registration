@@ -16,23 +16,23 @@ export class UserController {
             });
         } catch (error) {
             logger.error(error.message);
-            res.status(StatusCode.SERVER_ERROR).json({ message: error.message })
+            res.status(StatusCode.SERVER_ERROR).json({ message: error.message });
         }
     }
 
     static async userScheduling(req: Request, res: Response): Promise<void> {
         try {
-            const body = req.body as any
+            const body = req.body as any;
 
-            const roomData = await UserService.userScheduling(body as IUserScheduling)
+            const roomData = await UserService.userScheduling(body as IUserScheduling);
 
             res.status(StatusCode.CREATED).json({
                 message: 'success!',
-                data: roomData
+                data: roomData,
             });
         } catch (error) {
             logger.error(error.message);
-            res.status(StatusCode.SERVER_ERROR).json({ message: error.message })
+            res.status(StatusCode.SERVER_ERROR).json({ message: error.message });
         }
     }
 }

@@ -52,7 +52,7 @@ export class UserService {
                 start_time: getModData.available_time[0].time.getTime(),
             });
 
-            if (check) return false
+            if (check) return false;
             else return true;
         } catch (error) {
             logger.error(error.message);

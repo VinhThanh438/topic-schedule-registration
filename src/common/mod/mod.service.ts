@@ -67,7 +67,7 @@ export class ModService {
             const room = await Room.findOneAndUpdate({ _id: req.room_id }, { status: 'confirmed' });
             if (!room) throw new Error('Room not found!');
             // delete available time
-            else eventBus.emit(EVENT_ROOM_CONFIRMED, { time: room.start_time });
+            else eventBus.emit(EVENT_ROOM_CONFIRMED, { mod_id: room.mod_id, time: room.start_time });
         } catch (error) {
             logger.error(error.message);
             throw new Error(error.message);

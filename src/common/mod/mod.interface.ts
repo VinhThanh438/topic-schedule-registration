@@ -3,12 +3,9 @@ export interface IModCreate {
 }
 
 export interface IModScheduling {
-    date: Date;
+    date: string;
     type: string;
     mod_id: string;
-    available_time: {
-        time: Date;
-    }[];
 }
 
 export interface IModConfirm {

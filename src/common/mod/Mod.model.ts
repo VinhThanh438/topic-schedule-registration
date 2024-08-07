@@ -1,16 +1,10 @@
 import { Schema, model, Document } from 'mongoose';
-
-interface IAvailableTimeSchema extends Document {
-    _id: Schema.Types.ObjectId;
-    time: Date;
-}
+import { ModStatus } from './mod-status';
 
 interface IModResponse {
     mod_id: string;
     mod_name: string;
-    available_time: {
-        time: Date;
-    }[];
+    status: string
 }
 
 // morning (M): 8 - 11
@@ -25,22 +19,14 @@ interface IModResponse {
 export interface IMod extends Document {
     _id: Schema.Types.ObjectId;
     mod_name: string;
-    status: string; // available, busy, offline
-    available_time: {
-        time: Date;
-    }[];
+    status: string; // online, busy, offline
 
     transform(): IModResponse;
 }
 
-const AvailableTimeSchema: Schema<IAvailableTimeSchema> = new Schema({
-    time: { type: Date, required: true },
-});
-
 const ModSchema: Schema<IMod> = new Schema({
     mod_name: { type: String, require: true },
-    status: { type: String, require: true, default: 'offline' },
-    available_time: [AvailableTimeSchema],
+    status: { type: String, require: true, default: ModStatus.ONLINE },
 });
 
 ModSchema.method({
@@ -48,11 +34,7 @@ ModSchema.method({
         const transformed: IModResponse = {
             mod_id: this._id.toHexString(),
             mod_name: this.mod_name,
-            available_time: [
-                {
-                    time: new Date(this.time),
-                },
-            ],
+            status: this.status
         };
         return transformed;
     },

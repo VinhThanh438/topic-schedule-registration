@@ -18,6 +18,29 @@ export class ModController {
         }
     }
 
+    static async getOnlineMod(req: Request, res: Response): Promise<void> {
+        try {
+            const data = await ModService.getOnlineMod()
+
+            res.status(StatusCode.OK).json({
+                message: 'success!',
+                data
+            });
+        } catch (error) {
+            logger.error(error.message);
+            res.status(StatusCode.REQUEST_FORBIDDEN).json({ message: error.message });
+        }
+    }
+
+    static async getModSchedule(req: Request, res: Response): Promise<void> {
+        try {
+            const body = req.body as any
+        } catch (error) {
+            logger.error(error.message);
+            res.status(StatusCode.REQUEST_FORBIDDEN).json({ message: error.message });
+        }
+    }
+
     static async modScheduling(req: Request, res: Response): Promise<void> {
         try {
             const body = req.body as any;
@@ -31,23 +54,23 @@ export class ModController {
         }
     }
 
-    static async modConfirmed(req: Request, res: Response): Promise<void> {
-        try {
-            const body = req.body as any;
-            await ModService.modConfirmed(body as IModConfirm);
-            res.send('oke');
-        } catch (error) {
-            logger.error(error.message);
-            res.status(StatusCode.REQUEST_FORBIDDEN).json({ error: error.message });
-        }
-    }
+    // static async modConfirmed(req: Request, res: Response): Promise<void> {
+    //     try {
+    //         const body = req.body as any;
+    //         await ModService.modConfirmed(body as IModConfirm);
+    //         res.send('oke');
+    //     } catch (error) {
+    //         logger.error(error.message);
+    //         res.status(StatusCode.REQUEST_FORBIDDEN).json({ error: error.message });
+    //     }
+    // }
 
-    static async modCanceled(req: Request, res: Response): Promise<void> {
-        try {
-            const body = req.body as any;
-        } catch (error) {
-            logger.error(error.message);
-            res.status(StatusCode.REQUEST_FORBIDDEN).json({ error: error.message });
-        }
-    }
+    // static async modCanceled(req: Request, res: Response): Promise<void> {
+    //     try {
+    //         const body = req.body as any;
+    //     } catch (error) {
+    //         logger.error(error.message);
+    //         res.status(StatusCode.REQUEST_FORBIDDEN).json({ error: error.message });
+    //     }
+    // }
 }

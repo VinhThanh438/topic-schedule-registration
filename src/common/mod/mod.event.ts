@@ -11,9 +11,9 @@ export class ModEvent {
     public static async removeAvailableTime(data: any): Promise<void> {
         try {
             // remove available time
-            const getModData = await Mod.findOne({ _id: data.mod_id  })
+            // const getModData = await Mod.findOne({ _id: data.mod_id  })
 
-            const newData = getModData.available_time.filter(item => item.time !== data.time);
+            // const newData = getModData.available_time.filter(item => item.time !== data.time);
 
             
         } catch (error) {

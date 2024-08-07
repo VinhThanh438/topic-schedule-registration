@@ -6,6 +6,8 @@ import logger from '@common/logger';
 import Room from '@common/room/Room.model';
 import eventBus from '@common/event-bus';
 import { EVENT_ROOM_CONFIRMED } from '@common/constants/mod-event.constant';
+import { ModStatus } from './mod-status';
+import ModSchedule from '@common/mod_schedule/Mod-schedule.model';
 
 export class ModService {
     static async create(req: IModCreate): Promise<void> {
@@ -16,41 +18,34 @@ export class ModService {
                 }),
             );
         } catch (error) {
+            logger.error(error.message)
             throw new Error(error.message);
         }
     }
 
-    static async modScheduling(req: IModScheduling): Promise<IMod> {
+    static async getOnlineMod(): Promise<any> {
+        try {
+            return await Mod.find({ status: ModStatus.ONLINE })
+        } catch (error) {
+            logger.error(error.message)
+            throw new Error(error.message);
+        }
+    }
+
+    static async modScheduling(req: IModScheduling): Promise<any> {
         const session = await mongoose.startSession();
         try {
             session.startTransaction();
 
-            //  generate available time for mod
-            new GenerateTime(req.type, new Date(req.date));
-            const gen = GenerateTime.generate();
+            new GenerateTime(req.mod_id, req.type, req.date)
+            const generateTime = GenerateTime.generate()
 
-            const modData = await Mod.findById(req.mod_id);
+            const data = await ModSchedule.insertMany(generateTime)
 
-            // check for duplicate scheduling
-            if (modData.available_time.length === 0) {
-                gen.forEach((newTime) => {
-                    modData.available_time.push(newTime);
-                });
-            } else {
-                gen.forEach((newTime) => {
-                    modData.available_time.forEach((oldTime) => {
-                        if (oldTime.time.getTime() === newTime.time.getTime())
-                            throw new Error('mod has scheduled this time!');
-                    });
-                    modData.available_time.push(newTime);
-                });
-            }
+            await session.commitTransaction();
+            await session.endSession()
 
-            await modData.save();
-
-            session.commitTransaction();
-
-            return modData;
+            return data;
         } catch (error) {
             session.abortTransaction().catch((error) => {
                 logger.error(error.message);
@@ -62,23 +57,23 @@ export class ModService {
         }
     }
 
-    static async modConfirmed(req: IModConfirm): Promise<void> {
-        try {
-            const room = await Room.findOneAndUpdate({ _id: req.room_id }, { status: 'confirmed' });
-            if (!room) throw new Error('Room not found!');
-            // delete available time
-            else eventBus.emit(EVENT_ROOM_CONFIRMED, { mod_id: room.mod_id, time: room.start_time });
-        } catch (error) {
-            logger.error(error.message);
-            throw new Error(error.message);
-        }
-    }
+    // static async modConfirmed(req: IModConfirm): Promise<void> {
+    //     try {
+    //         const room = await Room.findOneAndUpdate({ _id: req.room_id }, { status: 'confirmed' });
+    //         if (!room) throw new Error('Room not found!');
+    //         // delete available time
+    //         else eventBus.emit(EVENT_ROOM_CONFIRMED, { mod_id: room.mod_id, time: room.start_time });
+    //     } catch (error) {
+    //         logger.error(error.message);
+    //         throw new Error(error.message);
+    //     }
+    // }
 
-    static async modCanceled(req: any): Promise<void> {
-        try {
-        } catch (error) {
-            logger.error(error.message);
-            throw new Error(error.message);
-        }
-    }
+    // static async modCanceled(req: any): Promise<void> {
+    //     try {
+    //     } catch (error) {
+    //         logger.error(error.message);
+    //         throw new Error(error.message);
+    //     }
+    // }
 }

@@ -17,7 +17,6 @@ export class GenerateTime {
 
     public static generate(): IGenerateTime[] {
         const parseString = this.date.replace(/(\d{2})\/(\d{2})\/(\d{4})/, '$3-$2-$1')
-        const convertDate = new Date(parseString);
         switch (this.type) {
             case 'M': { // Morning
                 const result: IGenerateTime[] = [];

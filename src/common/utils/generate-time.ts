@@ -24,7 +24,7 @@ export class GenerateTime {
                     for (let minute = 0; minute < 60; minute += 30) {
                         const dateString:string = parseString + `T${this.formatTime(hour, minute)}:00.000Z`
                         let startTime = Date.parse(dateString) // Unix timestamp
-                        let endTime = startTime + 1800;
+                        let endTime = startTime + 1800000;
                         result.push({
                             mod_id: this.modId,
                             start_time: startTime,
@@ -41,7 +41,7 @@ export class GenerateTime {
                     for (let minute = 0; minute < 60; minute += 30) {
                         const dateString:string = parseString + `T${this.formatTime(hour, minute)}:00.000Z`
                         let startTime = Date.parse(dateString) // Unix timestamp
-                        let endTime = startTime + 1800;
+                        let endTime = startTime + 1800000;
                         result.push({
                             mod_id: this.modId,
                             start_time: startTime,
@@ -58,7 +58,7 @@ export class GenerateTime {
                     for (let minute = 0; minute < 60; minute += 30) {
                         const dateString:string = parseString + `T${this.formatTime(hour, minute)}:00.000Z`
                         let startTime = Date.parse(dateString) // Unix timestamp
-                        let endTime = startTime + 1800;
+                        let endTime = startTime + 1800000;
                         result.push({
                             mod_id: this.modId,
                             start_time: startTime,

@@ -20,11 +20,11 @@ export class ModController {
 
     static async getOnlineMod(req: Request, res: Response): Promise<void> {
         try {
-            const data = await ModService.getOnlineMod()
+            const data = await ModService.getOnlineMod();
 
             res.status(StatusCode.OK).json({
                 message: 'success!',
-                data
+                data,
             });
         } catch (error) {
             logger.error(error.message);
@@ -34,7 +34,7 @@ export class ModController {
 
     static async getModSchedule(req: Request, res: Response): Promise<void> {
         try {
-            const body = req.body as any
+            const body = req.body as any;
         } catch (error) {
             logger.error(error.message);
             res.status(StatusCode.REQUEST_FORBIDDEN).json({ message: error.message });

@@ -16,7 +16,7 @@ export class ModScheduleEvent {
                 { is_available: false },
             );
 
-            if (!modScheduleData) logger.error('can not update mod schedule status!')
+            if (!modScheduleData) logger.error('can not update mod schedule status!');
         } catch (error) {
             logger.error(error.message);
         }

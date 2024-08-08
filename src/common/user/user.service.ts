@@ -40,9 +40,9 @@ export class UserService {
 
     static async checkDuplicateSchedule(req: IUserScheduling): Promise<Boolean> {
         try {
-            const modScheduleId = req.mod_schedule_id
+            const modScheduleId = req.mod_schedule_id;
 
-            const checkData = await ModSchedule.find({ _id: modScheduleId, is_available: false})
+            const checkData = await ModSchedule.find({ _id: modScheduleId, is_available: false });
 
             if (checkData.length !== 0) return false;
             else return true;
@@ -57,21 +57,23 @@ export class UserService {
         try {
             session.startTransaction();
 
-            const data = await TopicScheduleRoom.create(new TopicScheduleRoom({
-                mod_id: req.mod_id,
-                user_id: req.user_id,
-                mod_schedule_id: req.mod_schedule_id
-            }))
+            const data = await TopicScheduleRoom.create(
+                new TopicScheduleRoom({
+                    mod_id: req.mod_id,
+                    user_id: req.user_id,
+                    mod_schedule_id: req.mod_schedule_id,
+                }),
+            );
 
-            await session.commitTransaction()
-            session.endSession()
+            await session.commitTransaction();
+            session.endSession();
 
             eventBus.emit(EVENT_TOPIC_ROOM_CREATED, {
                 user_id: req.user_id,
-                mod_schedule_id: req.mod_schedule_id
-            })
+                mod_schedule_id: req.mod_schedule_id,
+            });
 
-            return data
+            return data;
         } catch (error) {
             session.abortTransaction().catch((err) => {
                 logger.error(err.message);

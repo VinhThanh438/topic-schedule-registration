@@ -4,7 +4,7 @@ const router = express.Router();
 
 router.post('/create', ModController.create);
 
-router.get('/online', ModController.getOnlineMod)
+router.get('/online', ModController.getOnlineMod);
 
 router.post('/schedule', ModController.modScheduling);
 

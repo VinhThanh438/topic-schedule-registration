@@ -4,7 +4,7 @@ import { ModStatus } from './mod-status';
 interface IModResponse {
     mod_id: string;
     mod_name: string;
-    status: string
+    status: string;
 }
 
 // morning (M): 8 - 11
@@ -34,7 +34,7 @@ ModSchema.method({
         const transformed: IModResponse = {
             mod_id: this._id.toHexString(),
             mod_name: this.mod_name,
-            status: this.status
+            status: this.status,
         };
         return transformed;
     },

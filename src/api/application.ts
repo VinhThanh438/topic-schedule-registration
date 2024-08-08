@@ -22,6 +22,6 @@ export class Application {
     public static registerEvent() {
         UserEvent.register();
         ModEvent.register();
-        ModScheduleEvent.register()
+        ModScheduleEvent.register();
     }
 }

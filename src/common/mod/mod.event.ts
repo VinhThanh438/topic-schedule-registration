@@ -12,10 +12,7 @@ export class ModEvent {
         try {
             // remove available time
             // const getModData = await Mod.findOne({ _id: data.mod_id  })
-
             // const newData = getModData.available_time.filter(item => item.time !== data.time);
-
-            
         } catch (error) {
             logger.error(error.message);
         }

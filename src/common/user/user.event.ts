@@ -6,10 +6,10 @@ import User from './User.model';
 
 export class UserEvent {
     public static register() {
-        eventBus.on(EVENT_TOPIC_ROOM_CREATED, UserEvent.handler);
+        eventBus.on(EVENT_TOPIC_ROOM_CREATED, UserEvent.roomCreatedhandler);
     }
 
-    public static async handler(data: IUserEvent): Promise<void> {
+    public static async roomCreatedhandler(data: IUserEvent): Promise<void> {
         try {
             await User.findOneAndUpdate(
                 { _id: data.user_id },

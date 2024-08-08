@@ -60,9 +60,9 @@ export class ModController {
 
             const data = await ModService.modConfirmed(body as IModConfirm);
 
-            res.status(StatusCode.CREATED).json({ 
-                message: 'Mod confirmed successfully!', 
-                data 
+            res.status(StatusCode.CREATED).json({
+                message: 'Mod confirmed successfully!',
+                data,
             });
         } catch (error) {
             logger.error(error.message);
@@ -70,12 +70,19 @@ export class ModController {
         }
     }
 
-    // static async modCanceled(req: Request, res: Response): Promise<void> {
-    //     try {
-    //         const body = req.body as any;
-    //     } catch (error) {
-    //         logger.error(error.message);
-    //         res.status(StatusCode.REQUEST_FORBIDDEN).json({ error: error.message });
-    //     }
-    // }
+    static async modCanceled(req: Request, res: Response): Promise<void> {
+        try {
+            const body = req.body as any;
+
+            const data = await ModService.modCanceled(body as any);
+
+            res.status(StatusCode.CREATED).json({
+                message: 'Mod canceled successfully!',
+                data,
+            });
+        } catch (error) {
+            logger.error(error.message);
+            res.status(StatusCode.REQUEST_FORBIDDEN).json({ error: error.message });
+        }
+    }
 }

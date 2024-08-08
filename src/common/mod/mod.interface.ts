@@ -11,3 +11,8 @@ export interface IModScheduling {
 export interface IModConfirm {
     schedule_room_id: string;
 }
+
+export interface IModCanceled {
+    schedule_room_id: string;
+    user_id: string
+}

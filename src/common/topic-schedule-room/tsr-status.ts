@@ -1,6 +1,6 @@
 export enum RoomStatus {
     PENDING = 'pending',
     CONFIRMED = 'confirmed',
-    MOD_CACELED = 'mod canceled',
+    MOD_CANCELED = 'mod canceled',
     USER_CANCELED = 'user canceled',
 }

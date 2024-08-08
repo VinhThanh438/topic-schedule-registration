@@ -1,13 +1,14 @@
 import { GenerateTime } from '@common/utils/generate-time';
-import { IModConfirm, IModCreate, IModScheduling } from './mod.interface';
+import { IModCanceled, IModConfirm, IModCreate, IModScheduling } from './mod.interface';
 import Mod from './Mod.model';
 import mongoose from 'mongoose';
 import logger from '@common/logger';
 import eventBus from '@common/event-bus';
 import { ModStatus } from './mod-status';
-import ModSchedule, { IModSchedule } from '@common/mod_schedule/Mod-schedule.model';
+import ModSchedule from '@common/mod_schedule/Mod-schedule.model';
 import TopicScheduleRoom, { ITopicScheduleRoom } from '@common/topic-schedule-room/Tsr.model';
 import { RoomStatus } from '@common/topic-schedule-room/tsr-status';
+import { EVENT_MOD_CANCELED } from '@common/constants/mod-event.constant';
 
 export class ModService {
     static async create(req: IModCreate): Promise<void> {
@@ -59,26 +60,47 @@ export class ModService {
 
     static async modConfirmed(req: IModConfirm): Promise<ITopicScheduleRoom> {
         try {
-            const data = await TopicScheduleRoom.findOneAndUpdate({
-                _id: req.schedule_room_id, 
-                status: RoomStatus.PENDING
-            }, {
-                status: RoomStatus.CONFIRMED
-            })
+            const data = await TopicScheduleRoom.findOneAndUpdate(
+                {
+                    _id: req.schedule_room_id,
+                    status: RoomStatus.PENDING,
+                },
+                {
+                    status: RoomStatus.CONFIRMED,
+                },
+            );
 
-            if (!data) throw new Error('cannot confirmed this schedule, topic_schedule_room not found!')
-            else return data
+            if (!data)
+                throw new Error('cannot confirmed this schedule, topic_schedule_room not found!');
+            else return data;
         } catch (error) {
             logger.error(error.message);
             throw new Error(error.message);
         }
     }
 
-    // static async modCanceled(req: any): Promise<void> {
-    //     try {
-    //     } catch (error) {
-    //         logger.error(error.message);
-    //         throw new Error(error.message);
-    //     }
-    // }
+    static async modCanceled(req: IModCanceled): Promise<ITopicScheduleRoom> {
+        try {
+            const data = await TopicScheduleRoom.findOneAndUpdate(
+                {
+                    _id: req.schedule_room_id,
+                    status: { $in: [RoomStatus.PENDING, RoomStatus.CONFIRMED] },
+                },
+                {
+                    status: RoomStatus.MOD_CANCELED,
+                },
+            );
+
+            if (!data)
+                throw new Error('cannot canceled this schedule, topic_schedule_room not found!');
+            else {
+                // update user's remaining lessions
+                eventBus.emit(EVENT_MOD_CANCELED, { user_id: data.user_id })
+                return data;
+            }
+        } catch (error) {
+            logger.error(error.message);
+            throw new Error(error.message);
+        }
+    }
 }

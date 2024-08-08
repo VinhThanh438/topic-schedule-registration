@@ -1,20 +1,24 @@
-import { EVENT_ROOM_CONFIRMED } from '@common/constants/mod-event.constant';
+import { EVENT_MOD_CANCELED } from '@common/constants/mod-event.constant';
 import eventBus from '@common/event-bus';
 import logger from '@common/logger';
-import Mod from './Mod.model';
+import User from '@common/user/User.model';
+import { IModCanceled } from './mod.interface';
 
 export class ModEvent {
     public static register() {
-        eventBus.on(EVENT_ROOM_CONFIRMED, ModEvent.removeAvailableTime);
+        eventBus.on(EVENT_MOD_CANCELED, ModEvent.modCanceledHandler)
     }
 
-    public static async removeAvailableTime(data: any): Promise<void> {
+    // refund 
+    public static async modCanceledHandler(req: IModCanceled): Promise<void> {
         try {
-            // remove available time
-            // const getModData = await Mod.findOne({ _id: data.mod_id  })
-            // const newData = getModData.available_time.filter(item => item.time !== data.time);
+            await User.findOneAndUpdate({ 
+                _id: req.user_id 
+            }, {
+                $inc: { remaining_lessions: 1 }
+            })
         } catch (error) {
-            logger.error(error.message);
+            logger.error(error.message)
         }
     }
 }

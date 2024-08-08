@@ -1,10 +1,8 @@
 import logger from '@common/logger';
 import { IUserCreate, IUserScheduling } from './user.interface';
 import User from './User.model';
-import Room, { IRoom } from '@common/room/Room.model';
-import Mod from '@common/mod/Mod.model';
 import eventBus from '@common/event-bus';
-import { EVENT_TOPIC_ROOM_CREATED } from '@common/constants/user-event.constant';
+import { EVENT_TOPIC_ROOM_CREATED } from '@common/constants/event.constant';
 import TopicScheduleRoom, { ITopicScheduleRoom } from '@common/topic-schedule-room/Tsr.model';
 import mongoose from 'mongoose';
 import ModSchedule from '@common/mod_schedule/Mod-schedule.model';

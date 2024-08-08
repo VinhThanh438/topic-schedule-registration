@@ -6,6 +6,8 @@ router.post('/create', ModController.create);
 
 router.get('/online', ModController.getOnlineMod);
 
+router.post('/get-mod-schedule', ModController.getModSchedules);
+
 router.post('/schedule', ModController.modScheduling);
 
 router.post('/confirm', ModController.modConfirmed);

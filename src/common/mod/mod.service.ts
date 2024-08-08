@@ -1,5 +1,11 @@
 import { GenerateTime } from '@common/utils/generate-time';
-import { IModCanceled, IModConfirm, IModCreate, IModScheduling } from './mod.interface';
+import {
+    IModCanceled,
+    IModConfirm,
+    IModCreate,
+    IModSchedules,
+    IModScheduling,
+} from './mod.interface';
 import Mod from './Mod.model';
 import mongoose from 'mongoose';
 import logger from '@common/logger';
@@ -8,7 +14,7 @@ import { ModStatus } from './mod-status';
 import ModSchedule from '@common/mod_schedule/Mod-schedule.model';
 import TopicScheduleRoom, { ITopicScheduleRoom } from '@common/topic-schedule-room/Tsr.model';
 import { RoomStatus } from '@common/topic-schedule-room/tsr-status';
-import { EVENT_MOD_CANCELED } from '@common/constants/mod-event.constant';
+import { EVENT_MOD_CANCELED, EVENT_ROOM_CONFIRMED } from '@common/constants/event.constant';
 
 export class ModService {
     static async create(req: IModCreate): Promise<void> {
@@ -33,12 +39,21 @@ export class ModService {
         }
     }
 
+    static async getModeSchedules(req: IModSchedules): Promise<any> {
+        try {
+            return await ModSchedule.find({ _id: req.mod_id });
+        } catch (error) {
+            logger.error(error.message);
+            throw new Error(error.message);
+        }
+    }
+
     static async modScheduling(req: IModScheduling): Promise<any> {
         const session = await mongoose.startSession();
         try {
             session.startTransaction();
 
-            new GenerateTime(req.mod_id, req.type, req.date);
+            new GenerateTime(req.mod_id, req.type, new Date(req.date));
             const generateTime = GenerateTime.generate();
 
             const data = await ModSchedule.insertMany(generateTime);
@@ -72,7 +87,15 @@ export class ModService {
 
             if (!data)
                 throw new Error('cannot confirmed this schedule, topic_schedule_room not found!');
-            else return data;
+            else {
+                const modScheduleData = await ModSchedule.findById(data.mod_schedule_id);
+
+                eventBus.emit(EVENT_ROOM_CONFIRMED, {
+                    schedule_room_id: data._id,
+                    start_time: modScheduleData.start_time,
+                });
+                return data;
+            }
         } catch (error) {
             logger.error(error.message);
             throw new Error(error.message);

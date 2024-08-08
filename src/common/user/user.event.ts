@@ -1,4 +1,4 @@
-import { EVENT_TOPIC_ROOM_CREATED } from '@common/constants/user-event.constant';
+import { EVENT_TOPIC_ROOM_CREATED } from '@common/constants/event.constant';
 import eventBus from '@common/event-bus';
 import { IUserEvent } from './user.interface';
 import logger from '@common/logger';

@@ -8,8 +8,13 @@ export interface IModScheduling {
     mod_id: string;
 }
 
+export interface IModSchedules {
+    mod_id: string;
+}
+
 export interface IModConfirm {
     schedule_room_id: string;
+    start_time: number;
 }
 
 export interface IModCanceled {

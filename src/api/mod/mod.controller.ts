@@ -1,5 +1,5 @@
 import logger from '@common/logger';
-import { IModConfirm, IModCreate, IModScheduling } from '@common/mod/mod.interface';
+import { IModConfirm, IModCreate, IModSchedules, IModScheduling } from '@common/mod/mod.interface';
 import { ModService } from '@common/mod/mod.service';
 import { StatusCode } from '@config/status-code';
 import { Request, Response } from 'express';
@@ -32,9 +32,16 @@ export class ModController {
         }
     }
 
-    static async getModSchedule(req: Request, res: Response): Promise<void> {
+    static async getModSchedules(req: Request, res: Response): Promise<void> {
         try {
             const body = req.body as any;
+
+            const data = await ModService.getModeSchedules(body as IModSchedules);
+
+            res.status(StatusCode.OK).json({
+                message: 'success!',
+                data,
+            });
         } catch (error) {
             logger.error(error.message);
             res.status(StatusCode.REQUEST_FORBIDDEN).json({ message: error.message });

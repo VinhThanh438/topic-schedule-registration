@@ -14,5 +14,5 @@ export interface IModConfirm {
 
 export interface IModCanceled {
     schedule_room_id: string;
-    user_id: string
+    user_id: string;
 }

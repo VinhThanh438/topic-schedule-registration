@@ -95,7 +95,7 @@ export class ModService {
                 throw new Error('cannot canceled this schedule, topic_schedule_room not found!');
             else {
                 // update user's remaining lessions
-                eventBus.emit(EVENT_MOD_CANCELED, { user_id: data.user_id })
+                eventBus.emit(EVENT_MOD_CANCELED, { user_id: data.user_id });
                 return data;
             }
         } catch (error) {

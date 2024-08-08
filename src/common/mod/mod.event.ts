@@ -6,19 +6,22 @@ import { IModCanceled } from './mod.interface';
 
 export class ModEvent {
     public static register() {
-        eventBus.on(EVENT_MOD_CANCELED, ModEvent.modCanceledHandler)
+        eventBus.on(EVENT_MOD_CANCELED, ModEvent.modCanceledHandler);
     }
 
-    // refund 
+    // refund
     public static async modCanceledHandler(req: IModCanceled): Promise<void> {
         try {
-            await User.findOneAndUpdate({ 
-                _id: req.user_id 
-            }, {
-                $inc: { remaining_lessions: 1 }
-            })
+            await User.findOneAndUpdate(
+                {
+                    _id: req.user_id,
+                },
+                {
+                    $inc: { remaining_lessions: 1 },
+                },
+            );
         } catch (error) {
-            logger.error(error.message)
+            logger.error(error.message);
         }
     }
 }

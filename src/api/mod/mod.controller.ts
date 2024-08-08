@@ -54,16 +54,21 @@ export class ModController {
         }
     }
 
-    // static async modConfirmed(req: Request, res: Response): Promise<void> {
-    //     try {
-    //         const body = req.body as any;
-    //         await ModService.modConfirmed(body as IModConfirm);
-    //         res.send('oke');
-    //     } catch (error) {
-    //         logger.error(error.message);
-    //         res.status(StatusCode.REQUEST_FORBIDDEN).json({ error: error.message });
-    //     }
-    // }
+    static async modConfirmed(req: Request, res: Response): Promise<void> {
+        try {
+            const body = req.body as any;
+
+            const data = await ModService.modConfirmed(body as IModConfirm);
+
+            res.status(StatusCode.CREATED).json({ 
+                message: 'Mod confirmed successfully!', 
+                data 
+            });
+        } catch (error) {
+            logger.error(error.message);
+            res.status(StatusCode.REQUEST_FORBIDDEN).json({ error: error.message });
+        }
+    }
 
     // static async modCanceled(req: Request, res: Response): Promise<void> {
     //     try {

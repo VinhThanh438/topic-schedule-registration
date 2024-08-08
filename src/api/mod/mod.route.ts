@@ -8,7 +8,7 @@ router.get('/online', ModController.getOnlineMod);
 
 router.post('/schedule', ModController.modScheduling);
 
-// router.post('/confirm', ModController.modConfirmed);
+router.post('/confirm', ModController.modConfirmed);
 
 // router.post('/cancel', ModController.modCanceled);
 

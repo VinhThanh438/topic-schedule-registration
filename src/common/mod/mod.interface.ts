@@ -9,5 +9,5 @@ export interface IModScheduling {
 }
 
 export interface IModConfirm {
-    room_id: string;
+    schedule_room_id: string;
 }

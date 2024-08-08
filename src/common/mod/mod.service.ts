@@ -1,11 +1,13 @@
 import { GenerateTime } from '@common/utils/generate-time';
-import { IModCreate, IModScheduling } from './mod.interface';
+import { IModConfirm, IModCreate, IModScheduling } from './mod.interface';
 import Mod from './Mod.model';
 import mongoose from 'mongoose';
 import logger from '@common/logger';
 import eventBus from '@common/event-bus';
 import { ModStatus } from './mod-status';
-import ModSchedule from '@common/mod_schedule/Mod-schedule.model';
+import ModSchedule, { IModSchedule } from '@common/mod_schedule/Mod-schedule.model';
+import TopicScheduleRoom, { ITopicScheduleRoom } from '@common/topic-schedule-room/Tsr.model';
+import { RoomStatus } from '@common/topic-schedule-room/tsr-status';
 
 export class ModService {
     static async create(req: IModCreate): Promise<void> {
@@ -55,17 +57,22 @@ export class ModService {
         }
     }
 
-    // static async modConfirmed(req: IModConfirm): Promise<void> {
-    //     try {
-    //         const room = await Room.findOneAndUpdate({ _id: req.room_id }, { status: 'confirmed' });
-    //         if (!room) throw new Error('Room not found!');
-    //         // delete available time
-    //         else eventBus.emit(EVENT_ROOM_CONFIRMED, { mod_id: room.mod_id, time: room.start_time });
-    //     } catch (error) {
-    //         logger.error(error.message);
-    //         throw new Error(error.message);
-    //     }
-    // }
+    static async modConfirmed(req: IModConfirm): Promise<ITopicScheduleRoom> {
+        try {
+            const data = await TopicScheduleRoom.findOneAndUpdate({
+                _id: req.schedule_room_id, 
+                status: RoomStatus.PENDING
+            }, {
+                status: RoomStatus.CONFIRMED
+            })
+
+            if (!data) throw new Error('cannot confirmed this schedule, topic_schedule_room not found!')
+            else return data
+        } catch (error) {
+            logger.error(error.message);
+            throw new Error(error.message);
+        }
+    }
 
     // static async modCanceled(req: any): Promise<void> {
     //     try {

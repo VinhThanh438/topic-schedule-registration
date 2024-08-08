@@ -5,6 +5,8 @@ import User from '@common/user/User.model';
 import { IModCanceled, IModConfirm } from './mod.interface';
 import { QueueService } from '@common/queue/queue.service';
 import { CREATE_ROOM_AFTER_CONFIRMATION } from '@common/constants/job.constant';
+import cron from 'cron'
+import generateDelayTime from '@common/utils/generate-delay-time';
 
 export class ModEvent {
     public static register() {
@@ -32,12 +34,20 @@ export class ModEvent {
     public static async roomConfirmedHandler(data: IModConfirm): Promise<void> {
         try {
             const getQueue = await QueueService.getQueue(CREATE_ROOM_AFTER_CONFIRMATION);
-            const startTime = data.start_time;
+            const startTime = data.start_time.toISOString();
 
-            await getQueue.add({ schedule_room_id: data.schedule_room_id }, {
-                delay: 1 * 60 * 1000
+            const delayTime = generateDelayTime(startTime)
+            console.log(delayTime)
+
+            const job = new cron.CronJob(delayTime, () => {
+                getQueue.add({ schedule_room_id: data.schedule_room_id });
+                return
             });
+            job.start()
+
+
         } catch (error) {
+            console.log(error)
             logger.error(error.message);
         }
     }

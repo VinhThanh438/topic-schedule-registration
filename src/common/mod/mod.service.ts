@@ -75,14 +75,14 @@ export class ModService {
 
     static async modConfirmed(req: IModConfirm): Promise<ITopicScheduleRoom> {
         try {
-            const data = await TopicScheduleRoom.findOneAndUpdate(
+            const data = await TopicScheduleRoom.findOne(
                 {
                     _id: req.schedule_room_id,
                     status: RoomStatus.PENDING,
                 },
-                {
-                    status: RoomStatus.CONFIRMED,
-                },
+                // {
+                //     status: RoomStatus.CONFIRMED,
+                // },
             );
 
             if (!data)

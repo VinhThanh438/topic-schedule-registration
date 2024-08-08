@@ -7,6 +7,7 @@ import eventBus from '@common/event-bus';
 import { EVENT_TOPIC_ROOM_CREATED } from '@common/constants/user-event.constant';
 import TopicScheduleRoom, { ITopicScheduleRoom } from '@common/topic-schedule-room/Tsr.model';
 import mongoose from 'mongoose';
+import ModSchedule from '@common/mod_schedule/Mod-schedule.model';
 
 export class UserService {
     static async createUser(req: IUserCreate): Promise<void> {
@@ -22,44 +23,34 @@ export class UserService {
         }
     }
 
-    // static async checkRemainingLession(req: IUserScheduling): Promise<Boolean> {
-    //     try {
-    //         const userData = await User.findOne({
-    //             _id: req.user_id,
-    //             remaining_lessions: { $lte: 0 },
-    //         });
+    static async checkRemainingLession(req: IUserScheduling): Promise<Boolean> {
+        try {
+            const userData = await User.findOne({
+                _id: req.user_id,
+                remaining_lessions: { $lte: 0 },
+            });
 
-    //         if (userData) return false;
-    //         else return true;
-    //     } catch (error) {
-    //         logger.error(error.message);
-    //         throw new Error(error.message);
-    //     }
-    // }
+            if (userData) return false;
+            else return true;
+        } catch (error) {
+            logger.error(error.message);
+            throw new Error(error.message);
+        }
+    }
 
-    // static async checkDuplicateSchedule(req: IUserScheduling): Promise<Boolean> {
-    //     try {
-    //         const getModData = await Mod.findOne(
-    //             {
-    //                 _id: req.mod_id,
-    //                 'available_time._id': req.time_id,
-    //             },
-    //             {
-    //                 'available_time.$': 1,
-    //             },
-    //         );
+    static async checkDuplicateSchedule(req: IUserScheduling): Promise<Boolean> {
+        try {
+            const modScheduleId = req.mod_schedule_id
 
-    //         const check = await Room.findOne({
-    //             start_time: getModData.available_time[0].time.getTime(),
-    //         });
+            const checkData = await ModSchedule.find({ _id: modScheduleId, is_available: false})
 
-    //         if (check) return false;
-    //         else return true;
-    //     } catch (error) {
-    //         logger.error(error.message);
-    //         throw new Error(error.message);
-    //     }
-    // }
+            if (checkData.length !== 0) return false;
+            else return true;
+        } catch (error) {
+            logger.error(error.message);
+            throw new Error(error.message);
+        }
+    }
 
     static async userScheduling(req: IUserScheduling): Promise<ITopicScheduleRoom> {
         const session = await mongoose.startSession();

@@ -11,15 +11,10 @@ export class GenerateTime {
         GenerateTime.date = date;
     }
 
-    public static getEndTime(startTime: string) {
-        const [hours, minutes] = startTime.split(':').map(Number);
-        let endTime = new Date();
-        endTime.setHours(hours);
-        endTime.setMinutes(minutes + 30);
-        endTime.setSeconds(0);
-        endTime.setMilliseconds(0);
-
-        return endTime;
+    public static getEndTime(startTime: string): string {
+        const startDate = new Date(startTime);
+        const endDate = new Date(startDate.getTime() + 30 * 60 * 1000); // Add 30 minutes
+        return endDate.toISOString();
     }
 
     static generate(): IGenerateTime[] {
@@ -34,7 +29,7 @@ export class GenerateTime {
                         result.push({
                             mod_id: GenerateTime.modId,
                             start_time: new Date(startTime),
-                            end_time: endTime,
+                            end_time: new Date(endTime),
                         });
                     }
                 }
@@ -50,7 +45,7 @@ export class GenerateTime {
                         result.push({
                             mod_id: GenerateTime.modId,
                             start_time: new Date(startTime),
-                            end_time: endTime,
+                            end_time: new Date(endTime),
                         });
                     }
                 }
@@ -66,7 +61,7 @@ export class GenerateTime {
                         result.push({
                             mod_id: GenerateTime.modId,
                             start_time: new Date(startTime),
-                            end_time: endTime,
+                            end_time: new Date(endTime),
                         });
                     }
                 }

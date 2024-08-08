@@ -1,5 +1,5 @@
-import { Document, Schema } from "mongoose";
-import { RoomStatus } from "./tsr.status";
+import { Document, model, Schema } from "mongoose";
+import { RoomStatus } from "./tsr-status";
 
 export interface ITopicScheduleRoomResponse {
     schedule_room_id: string
@@ -39,3 +39,5 @@ TopicScheduleRoomSchema.method({
         return transformed
     }
 })
+
+export default model<ITopicScheduleRoom>('TopicScheduleRoom', TopicScheduleRoomSchema);

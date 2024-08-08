@@ -1,1 +1,1 @@
-export const EVENT_ROOM_CREATED = 'event-room-created';
+export const EVENT_TOPIC_ROOM_CREATED = 'event-topic-room-created';

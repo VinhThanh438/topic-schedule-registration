@@ -5,7 +5,7 @@ export interface IUserCreate {
 export interface IUserScheduling {
     mod_id: string;
     user_id: string;
-    time_id: string;
+    mod_schedule_id: string;
 }
 
 export interface IUserEvent {

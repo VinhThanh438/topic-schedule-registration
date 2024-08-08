@@ -4,7 +4,7 @@ import { UserService } from '@common/user/user.service';
 import { StatusCode } from '@config/status-code';
 import { NextFunction, Request, Response } from 'express';
 
-// export class UserMidleware {
+// export class UserMiddleware {
 //     static async checkRemainingLessions(
 //         req: Request,
 //         res: Response,

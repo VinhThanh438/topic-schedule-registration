@@ -4,7 +4,8 @@ import User from './User.model';
 import Room, { IRoom } from '@common/room/Room.model';
 import Mod from '@common/mod/Mod.model';
 import eventBus from '@common/event-bus';
-import { EVENT_ROOM_CREATED } from '@common/constants/user-event.constant';
+import { EVENT_TOPIC_ROOM_CREATED } from '@common/constants/user-event.constant';
+import TopicScheduleRoom, { ITopicScheduleRoom } from '@common/topic-schedule-room/Tsr.model';
 import mongoose from 'mongoose';
 
 export class UserService {
@@ -60,50 +61,33 @@ export class UserService {
     //     }
     // }
 
-    // static async userScheduling(req: IUserScheduling): Promise<IRoom> {
-    //     const session = await mongoose.startSession();
-    //     try {
-    //         session.startTransaction();
+    static async userScheduling(req: IUserScheduling): Promise<ITopicScheduleRoom> {
+        const session = await mongoose.startSession();
+        try {
+            session.startTransaction();
 
-    //         // get time
-    //         const modData = await Mod.findOne(
-    //             {
-    //                 _id: req.mod_id,
-    //                 'available_time._id': req.time_id,
-    //             },
-    //             {
-    //                 'available_time.$': 1,
-    //             },
-    //         );
+            const data = await TopicScheduleRoom.create(new TopicScheduleRoom({
+                mod_id: req.mod_id,
+                user_id: req.user_id,
+                mod_schedule_id: req.mod_schedule_id
+            }))
 
-    //         if (!modData) throw new Error('user or time does not exist');
-    //         else {
-    //             const time = modData.available_time[0].time;
+            await session.commitTransaction()
+            session.endSession()
 
-    //             // create new room
-    //             const roomData = await Room.create(
-    //                 new Room({
-    //                     mod_id: req.mod_id,
-    //                     user_id: req.user_id,
-    //                     start_time: time,
-    //                 }),
-    //             );
+            eventBus.emit(EVENT_TOPIC_ROOM_CREATED, {
+                user_id: req.user_id,
+                mod_schedule_id: req.mod_schedule_id
+            })
 
-    //             await session.commitTransaction();
-    //             await session.endSession();
-
-    //             // update remaining lession of user
-    //             eventBus.emit(EVENT_ROOM_CREATED, { user_id: req.user_id });
-
-    //             return roomData;
-    //         }
-    //     } catch (error) {
-    //         session.abortTransaction().catch((err) => {
-    //             logger.error(err.message);
-    //             throw new Error(err.message);
-    //         });
-    //         logger.error(error.message);
-    //         throw new Error(error.message);
-    //     }
-    // }
+            return data
+        } catch (error) {
+            session.abortTransaction().catch((err) => {
+                logger.error(err.message);
+                throw new Error(err.message);
+            });
+            logger.error(error.message);
+            throw new Error(error.message);
+        }
+    }
 }

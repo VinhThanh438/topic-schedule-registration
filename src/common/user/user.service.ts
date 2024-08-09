@@ -1,9 +1,11 @@
 import logger from '@common/logger';
-import { IUserCreate, IUserScheduling } from './user.interface';
+import { IUserCreate, IUserEvent, IUserScheduling } from './user.interface';
 import User from './User.model';
 import eventBus from '@common/event-bus';
 import { EVENT_TOPIC_ROOM_CREATED } from '@common/constants/event.constant';
-import TopicScheduleRoom, { ITopicScheduleRoom } from '@common/topic-schedule-room/Topic-schedule-room.model';
+import TopicScheduleRoom, {
+    ITopicScheduleRoom,
+} from '@common/topic-schedule-room/Topic-schedule-room.model';
 import mongoose from 'mongoose';
 import ModSchedule from '@common/mod_schedule/Mod-schedule.model';
 
@@ -77,6 +79,15 @@ export class UserService {
                 logger.error(err.message);
                 throw new Error(err.message);
             });
+            logger.error(error.message);
+            throw new Error(error.message);
+        }
+    }
+
+    static async updateRemainingLession(req: IUserEvent): Promise<void> {
+        try {
+            await User.findOneAndUpdate({ _id: req.user_id }, { $inc: { remaining_lessions: -1 } });
+        } catch (error) {
             logger.error(error.message);
             throw new Error(error.message);
         }

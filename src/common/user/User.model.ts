@@ -1,12 +1,12 @@
 import { Schema, model, Document } from 'mongoose';
 
-interface IUserResponse {
+export interface IUserResponse {
     user_id: string;
     user_name: string;
     remaining_lessions: number;
 }
 
-interface IUser extends Document {
+export interface IUser extends Document {
     _id: Schema.Types.ObjectId;
     user_name: string;
     remaining_lessions: number;

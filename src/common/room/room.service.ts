@@ -1,6 +1,6 @@
 import logger from '@common/logger';
-import { IRoomCreate, IRoomGetByMod, IRoomGetByUser } from './room.interface';
-import Room, { IRoom } from './Room.model';
+import { IRoomCreate } from './room.interface';
+import Room from './Room.model';
 
 export class RoomService {
     static async createRoom(req: IRoomCreate): Promise<void> {

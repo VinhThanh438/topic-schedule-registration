@@ -1,5 +1,5 @@
 import { Document, model, Schema } from 'mongoose';
-import { RoomStatus } from './tsr-status';
+import { RoomStatus } from './topic-schedule-room-status';
 
 export interface ITopicScheduleRoomResponse {
     schedule_room_id: string;

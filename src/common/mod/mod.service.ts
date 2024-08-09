@@ -12,8 +12,8 @@ import logger from '@common/logger';
 import eventBus from '@common/event-bus';
 import { ModStatus } from './mod-status';
 import ModSchedule from '@common/mod_schedule/Mod-schedule.model';
-import TopicScheduleRoom, { ITopicScheduleRoom } from '@common/topic-schedule-room/Tsr.model';
-import { RoomStatus } from '@common/topic-schedule-room/tsr-status';
+import TopicScheduleRoom, { ITopicScheduleRoom } from '@common/topic-schedule-room/Topic-schedule-room.model';
+import { RoomStatus } from '@common/topic-schedule-room/topic-schedule-room-status';
 import { EVENT_MOD_CANCELED, EVENT_ROOM_CONFIRMED } from '@common/constants/event.constant';
 
 export class ModService {

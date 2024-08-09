@@ -1,6 +1,6 @@
-import { RoomStatus } from './tsr-status';
-import { IGetRoomConfirmed } from './tsr.interface';
-import TopicScheduleRoom, { ITopicScheduleRoom } from './Tsr.model';
+import { RoomStatus } from './topic-schedule-room-status';
+import { IGetRoomConfirmed } from './topic-schedule-room.interface';
+import TopicScheduleRoom, { ITopicScheduleRoom } from './Topic-schedule-room.model';
 
 export class TopicScheduleRoomService {
     static async getConfirmedRoom(req: IGetRoomConfirmed): Promise<ITopicScheduleRoom[]> {

@@ -28,7 +28,7 @@ export class UserController {
 
             res.status(StatusCode.CREATED).json({
                 message: 'success!',
-                // data: roomData,
+                data: roomData,
             });
         } catch (error) {
             logger.error(error.message);

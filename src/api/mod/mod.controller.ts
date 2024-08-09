@@ -38,6 +38,11 @@ export class ModController {
 
             const data = await ModService.getModeSchedules(body as IModSchedules);
 
+            if (data.length === 0)
+                res.status(StatusCode.REQUEST_NOT_FOUND).json({
+                    message: 'not found!',
+                });
+
             res.status(StatusCode.OK).json({
                 message: 'success!',
                 data,

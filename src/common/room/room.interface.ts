@@ -5,3 +5,7 @@ export interface IRoomGetByMod {
 export interface IRoomGetByUser {
     user_id: string;
 }
+
+export interface IRoomCreate {
+    schedule_room_id: string;
+}

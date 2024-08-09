@@ -12,6 +12,7 @@ export class UserMiddleware {
     ): Promise<void> {
         try {
             const body = req.body as any;
+
             const check = await UserService.checkRemainingLession(body as IUserScheduling);
 
             if (!check) throw new Error('user has no lessions left!');
@@ -29,6 +30,7 @@ export class UserMiddleware {
     ): Promise<void> {
         try {
             const body = req.body as any;
+
             const check = await UserService.checkDuplicateSchedule(body as IUserScheduling);
 
             if (!check) throw new Error('user has been booked this time');

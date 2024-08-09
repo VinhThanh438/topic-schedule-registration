@@ -1,5 +1,5 @@
 import logger from '@common/logger';
-import { REDIS_URL } from '@config/environment';
+import { REDIS_URI } from '@config/environment';
 import ioredis, { Redis } from 'ioredis';
 import { QueueOptions } from 'bull';
 
@@ -17,7 +17,7 @@ export class ConnectRedis {
     }
 
     static async connect(overrideClient = true, options = {}): Promise<Redis> {
-        const tmp = new ioredis(REDIS_URL, {
+        const tmp = new ioredis(REDIS_URI, {
             lazyConnect: true,
             maxRetriesPerRequest: 10,
             retryStrategy: (times) => {
@@ -56,7 +56,7 @@ export class ConnectRedis {
     }
 
     static createClient(options = {}): Redis {
-        const tmp = new ioredis(REDIS_URL, {
+        const tmp = new ioredis(REDIS_URI, {
             maxRetriesPerRequest: 10,
             retryStrategy: (times) => {
                 const delay = Math.min(times * 50, 2000);

@@ -11,6 +11,9 @@ export class CreateRoom {
 
         logger.info(`processing queue ${CREATE_ROOM_AFTER_CONFIRMATION}`);
 
+        await queue.add({ job: CREATE_ROOM_AFTER_CONFIRMATION }, {
+            repeat: { cron: "* * * *", limit: 1 }
+        })
         await queue.process(CreateRoom.handler);
 
         return queue;

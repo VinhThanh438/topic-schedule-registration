@@ -4,7 +4,6 @@ import logger from '@common/logger';
 import { IModCanceled, IModConfirm } from './mod.interface';
 import { QueueService } from '@common/queue/queue.service';
 import { CREATE_ROOM_AFTER_CONFIRMATION } from '@common/constants/job.constant';
-import { CronJob } from 'cron';
 import generateDelayTime from '@common/utils/generate-delay-time';
 import { ModService } from './mod.service';
 
@@ -39,7 +38,6 @@ export class ModEvent {
                 },
             );
         } catch (error) {
-            console.log(error);
             logger.error(error.message);
         }
     }

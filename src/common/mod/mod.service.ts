@@ -94,11 +94,14 @@ export class ModService {
             else {
                 const modScheduleData = await ModSchedule.findById(data.mod_schedule_id);
 
-                eventBus.emit(EVENT_ROOM_CONFIRMED, {
-                    schedule_room_id: data._id,
-                    start_time: modScheduleData.start_time,
-                });
-                return data;
+                if (!modScheduleData) throw new Error('modScheduleData not found!')
+                else {
+                    eventBus.emit(EVENT_ROOM_CONFIRMED, {
+                        schedule_room_id: data._id,
+                        start_time: modScheduleData.start_time,
+                    });
+                    return data;
+                }
             }
         } catch (error) {
             logger.error(error.message);
@@ -121,7 +124,6 @@ export class ModService {
             if (!data)
                 throw new Error('cannot canceled this schedule, topic_schedule_room not found!');
             else {
-                // update user's remaining lessions
                 eventBus.emit(EVENT_MOD_CANCELED, { user_id: data.user_id });
                 return data;
             }

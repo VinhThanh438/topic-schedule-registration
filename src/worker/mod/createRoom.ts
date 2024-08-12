@@ -9,11 +9,13 @@ export class CreateRoom {
     static async register(): Promise<Queue> {
         const queue = await QueueService.getQueue<unknown>(CREATE_ROOM_AFTER_CONFIRMATION);
 
-        logger.info(`processing queue ${CREATE_ROOM_AFTER_CONFIRMATION}`);
+        logger.info(`listening to queue ${CREATE_ROOM_AFTER_CONFIRMATION}`);
 
-        await queue.add({ job: CREATE_ROOM_AFTER_CONFIRMATION }, {
-            repeat: { cron: "* * * *", limit: 1 }
-        })
+        const timeDelayToCleanJob = 5000;
+        const jobStatus = 'delayed';
+
+        await queue.clean(timeDelayToCleanJob, jobStatus);
+        await queue.add({ job: CREATE_ROOM_AFTER_CONFIRMATION });
         await queue.process(CreateRoom.handler);
 
         return queue;
@@ -21,14 +23,20 @@ export class CreateRoom {
 
     static async handler(job: Job, done: DoneCallback): Promise<void> {
         try {
-            const data = await TopicScheduleRoomService.getConfirmedRoom(job.data.schedule_room_id);
+            logger.debug(`processing queue ${CREATE_ROOM_AFTER_CONFIRMATION}`);
 
-            if (data) {
-                await RoomService.createRoom(job.data.schedule_room_id);
+            if (job.data.schedule_room_id) {
+                const data = await TopicScheduleRoomService.getConfirmedRoom(
+                    job.data.schedule_room_id,
+                );
 
-                logger.info('Room created successfully!');
-            } else {
-                logger.info('cannot create room, topic_schedule_room has been canceled!');
+                if (data) {
+                    await RoomService.createRoom({ schedule_room_id: data.mod_schedule_id });
+
+                    logger.info('Room created successfully!');
+                } else {
+                    logger.info('cannot create room, topic_schedule_room has been canceled!');
+                }
             }
 
             done();

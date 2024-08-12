@@ -32,11 +32,12 @@ export class ModEvent {
             const startTime = data.start_time.toISOString();
             const delayTime = generateDelayTime(startTime);
 
-            getQueue.add({ schedule_room_id: data.schedule_room_id });
-            // const job = new CronJob(delayTime, () => {
-            // });
-
-            // job.start();
+            getQueue.add(
+                { schedule_room_id: data.schedule_room_id },
+                {
+                    repeat: { cron: delayTime, limit: 1 },
+                },
+            );
         } catch (error) {
             console.log(error);
             logger.error(error.message);

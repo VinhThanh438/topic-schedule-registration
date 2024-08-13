@@ -53,10 +53,7 @@ export class UserService {
     }
 
     static async userScheduling(req: IUserScheduling): Promise<ITopicScheduleRoom> {
-        const session = await mongoose.startSession();
         try {
-            session.startTransaction();
-
             const data = await TopicScheduleRoom.create(
                 new TopicScheduleRoom({
                     mod_id: req.mod_id,
@@ -65,9 +62,6 @@ export class UserService {
                 }),
             );
 
-            await session.commitTransaction();
-            session.endSession();
-
             eventBus.emit(EVENT_TOPIC_ROOM_CREATED, {
                 user_id: req.user_id,
                 mod_schedule_id: req.mod_schedule_id,
@@ -75,10 +69,6 @@ export class UserService {
 
             return data;
         } catch (error) {
-            session.abortTransaction().catch((err) => {
-                logger.error(err.message);
-                throw new Error(err.message);
-            });
             logger.error(error.message);
             throw new Error(error.message);
         }

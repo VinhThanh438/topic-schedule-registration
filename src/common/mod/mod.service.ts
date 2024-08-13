@@ -53,25 +53,14 @@ export class ModService {
     }
 
     static async modScheduling(req: IModScheduling): Promise<any> {
-        const session = await mongoose.startSession();
         try {
-            session.startTransaction();
-
             new GenerateTime(req.mod_id, req.type, new Date(req.date));
             const generateTime = GenerateTime.generate();
 
             const data = await ModSchedule.insertMany(generateTime);
 
-            await session.commitTransaction();
-            await session.endSession();
-
             return data;
         } catch (error) {
-            session.abortTransaction().catch((error) => {
-                logger.error(error.message);
-                throw new Error(error.message);
-            });
-
             logger.error(error.message);
             throw new Error(error.message);
         }
@@ -94,7 +83,7 @@ export class ModService {
             else {
                 const modScheduleData = await ModSchedule.findById(data.mod_schedule_id);
 
-                if (!modScheduleData) throw new Error('modScheduleData not found!')
+                if (!modScheduleData) throw new Error('modScheduleData is empty!');
                 else {
                     eventBus.emit(EVENT_ROOM_CONFIRMED, {
                         schedule_room_id: data._id,

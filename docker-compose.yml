@@ -1,0 +1,77 @@
+version: '1.0'
+
+services:
+  mongo:
+    container_name: mongo
+    image: mongo:latest
+    volumes:
+        - mongo_data:/data/db/
+        - mongo_log:/var/log/mongodb/
+    ports:
+        - "27016:27017"
+    networks:
+        - common
+    restart: always    
+
+  redis:
+    container_name: redis
+    image: redis:latest
+    volumes:
+        - redis_data:/data
+    ports:
+        - "6378:6379"
+    networks:
+        - common
+    restart: always
+
+  booking-api:
+    image: app-api
+    build:
+      context: .
+      target: api
+      dockerfile: ./Dockerfile
+    depends_on:
+      - mongo
+      - redis
+    environment:
+      - MONGO_URI=${MONGO_URI}
+      - REDIS_URI=${REDIS_URI}
+      - LOG_LEVEL=${LOG_LEVEL}
+    env_file:
+      - .env
+    networks:
+      - common
+    ports:
+      - 3000:3000
+
+  booking-worker:
+    image: app-worker
+    build:
+      context: .
+      target: worker
+      dockerfile: ./Dockerfile
+    environment:
+      - MONGO_URI=${MONGO_URI}
+      - REDIS_URI=${REDIS_URI}
+      - LOG_LEVEL=${LOG_LEVEL}
+    env_file:
+      - .env
+    networks:
+      - common
+    depends_on:
+      - mongo
+      - redis
+
+networks:
+    common:
+      name: common
+      driver: bridge
+
+volumes:
+    mongo_data:
+      driver: local
+      name: mongo_data
+    mongo_log:
+      driver: local
+      name: mongo_log
+    redis_data:

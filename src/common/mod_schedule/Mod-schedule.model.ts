@@ -6,6 +6,7 @@ export interface IModScheduleResponse {
     start_time: Date;
     end_time: Date;
     is_available: boolean;
+    is_deleted: boolean;
 }
 
 export interface IModSchedule extends Document {
@@ -14,6 +15,7 @@ export interface IModSchedule extends Document {
     start_time: Date;
     end_time: Date;
     is_available: boolean; // (true, false)
+    is_deleted: boolean;
 
     transform(): IModScheduleResponse;
 }
@@ -23,6 +25,7 @@ const ModScheduleSchema: Schema<IModSchedule> = new Schema({
     start_time: { type: Date, required: true },
     end_time: { type: Date, required: true },
     is_available: { type: Boolean, required: true, default: true },
+    is_deleted: { type: Boolean, required: true, default: false },
 });
 
 ModScheduleSchema.method({
@@ -33,6 +36,7 @@ ModScheduleSchema.method({
             start_time: new Date(this.start_time),
             end_time: new Date(this.end_time),
             is_available: this.is_available,
+            is_deleted: this.is_deleted,
         };
 
         return transformed;

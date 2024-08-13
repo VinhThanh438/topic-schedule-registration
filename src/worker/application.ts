@@ -1,12 +1,12 @@
-import { ConnectDB } from '@common/infrastructure/mongo.adapter';
-import { ConnectRedis } from '@common/infrastructure/redis.adapter';
+import { DatabaseAdapter } from '@common/infrastructure/mongo.adapter';
+import { RedisAdapter } from '@common/infrastructure/redis.adapter';
 import { WorkerServer } from './server';
 
 export class Application {
     public static async createApp(): Promise<WorkerServer> {
-        await ConnectDB.connect();
+        await DatabaseAdapter.connect();
 
-        await ConnectRedis.connect();
+        await RedisAdapter.connect();
 
         const server = new WorkerServer();
 

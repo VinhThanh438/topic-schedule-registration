@@ -3,17 +3,17 @@ import { REDIS_URI } from '@config/environment';
 import ioredis, { Redis } from 'ioredis';
 import { QueueOptions } from 'bull';
 
-export class ConnectRedis {
+export class RedisAdapter {
     private static client: Redis;
 
     private static subscriber: Redis;
     private static allClients: Redis[] = [];
 
     static async getClient(): Promise<Redis> {
-        if (!ConnectRedis.client) {
-            await ConnectRedis.connect();
+        if (!RedisAdapter.client) {
+            await RedisAdapter.connect();
         }
-        return ConnectRedis.client;
+        return RedisAdapter.client;
     }
 
     static async connect(overrideClient = true, options = {}): Promise<Redis> {
@@ -49,9 +49,9 @@ export class ConnectRedis {
         }
 
         if (overrideClient) {
-            ConnectRedis.client = tmp;
+            RedisAdapter.client = tmp;
         }
-        ConnectRedis.allClients.push(tmp);
+        RedisAdapter.allClients.push(tmp);
         return tmp;
     }
 
@@ -80,14 +80,14 @@ export class ConnectRedis {
             process.exit(1);
         });
 
-        ConnectRedis.allClients.push(tmp);
+        RedisAdapter.allClients.push(tmp);
 
         return tmp;
     }
 
     static async getQueueOptions(): Promise<QueueOptions> {
-        if (!ConnectRedis.subscriber) {
-            ConnectRedis.subscriber = await ConnectRedis.connect(false, {
+        if (!RedisAdapter.subscriber) {
+            RedisAdapter.subscriber = await RedisAdapter.connect(false, {
                 maxRetriesPerRequest: null,
                 enableReadyCheck: false,
             });
@@ -102,11 +102,11 @@ export class ConnectRedis {
             createClient: (type) => {
                 switch (type) {
                     case 'client':
-                        return ConnectRedis.client;
+                        return RedisAdapter.client;
                     case 'subscriber':
-                        return ConnectRedis.subscriber;
+                        return RedisAdapter.subscriber;
                     default:
-                        return ConnectRedis.createClient({
+                        return RedisAdapter.createClient({
                             maxRetriesPerRequest: null,
                             enableReadyCheck: false,
                         });

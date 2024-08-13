@@ -42,7 +42,7 @@ export class CreateRoom {
             done();
         } catch (error) {
             logger.error(error.message);
-            throw new Error(error.message);
+            done(error);
         }
     }
 }

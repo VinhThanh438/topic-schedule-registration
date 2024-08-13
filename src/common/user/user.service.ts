@@ -54,32 +54,40 @@ export class UserService {
 
     static async userScheduling(req: IUserScheduling): Promise<ITopicScheduleRoom> {
         try {
-            const data = await TopicScheduleRoom.create(
-                new TopicScheduleRoom({
-                    mod_id: req.mod_id,
-                    user_id: req.user_id,
-                    mod_schedule_id: req.mod_schedule_id,
-                }),
+            const userData = await User.findOneAndUpdate(
+                { _id: req.user_id },
+                { $inc: { remaining_lessions: -1 } },
             );
 
+            if (userData) {
+                const data = await TopicScheduleRoom.create(
+                    new TopicScheduleRoom({
+                        mod_id: req.mod_id,
+                        user_id: req.user_id,
+                        mod_schedule_id: req.mod_schedule_id,
+                    }),
+                );
+
+                return data;
+            } else {
+                logger.info('userData not found');
+            }
+
             eventBus.emit(EVENT_TOPIC_ROOM_CREATED, {
-                user_id: req.user_id,
+                // user_id: req.user_id,
                 mod_schedule_id: req.mod_schedule_id,
             });
-
-            return data;
         } catch (error) {
             logger.error(error.message);
             throw new Error(error.message);
         }
     }
 
-    static async updateRemainingLession(req: IUserEvent): Promise<void> {
-        try {
-            await User.findOneAndUpdate({ _id: req.user_id }, { $inc: { remaining_lessions: -1 } });
-        } catch (error) {
-            logger.error(error.message);
-            throw new Error(error.message);
-        }
-    }
+    // static async updateRemainingLession(req: IUserEvent): Promise<void> {
+    //     try {
+    //     } catch (error) {
+    //         logger.error(error.message);
+    //         throw new Error(error.message);
+    //     }
+    // }
 }

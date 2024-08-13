@@ -34,13 +34,13 @@ export class ModController {
 
     static async getModSchedules(req: Request, res: Response): Promise<void> {
         try {
-            const body = req.body as any;
+            const mod_id = req.params.modid;
 
-            const data = await ModService.getModeSchedules(body as IModSchedules);
+            const data = await ModService.getModeSchedules(mod_id as any);
 
             if (data.length === 0)
                 res.status(StatusCode.REQUEST_NOT_FOUND).json({
-                    message: 'not found!',
+                    message: 'cannot found mod schedule',
                 });
 
             res.status(StatusCode.OK).json({
@@ -82,11 +82,11 @@ export class ModController {
         }
     }
 
-    static async modCanceled(req: Request, res: Response): Promise<void> {
+    static async topicScheduleRoomCanceled(req: Request, res: Response): Promise<void> {
         try {
             const body = req.body as any;
 
-            const data = await ModService.modCanceled(body as any);
+            const data = await ModService.topicScheduleRoomCanceled(body as any);
 
             res.status(StatusCode.CREATED).json({
                 message: 'Mod canceled successfully!',

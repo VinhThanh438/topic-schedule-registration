@@ -6,12 +6,12 @@ import { UserService } from './user.service';
 
 export class UserEvent {
     public static register() {
-        eventBus.on(EVENT_TOPIC_ROOM_CREATED, UserEvent.lessionRefundHandler);
+        // eventBus.on(EVENT_TOPIC_ROOM_CREATED, UserEvent.Handler);
     }
 
-    public static async lessionRefundHandler(data: IUserEvent): Promise<void> {
+    public static async Handler(data: IUserEvent): Promise<void> {
         try {
-            await UserService.updateRemainingLession({ user_id: data.user_id });
+            // await UserService.updateRemainingLession({ user_id: data.user_id });
         } catch (error) {
             logger.error(error.message);
         }

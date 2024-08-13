@@ -6,12 +6,14 @@ router.post('/create', ModController.create);
 
 router.get('/online', ModController.getOnlineMod);
 
-router.post('/get-mod-schedule', ModController.getModSchedules);
+router.get('/schedule/:modid', ModController.getModSchedules);
 
 router.post('/schedule', ModController.modScheduling);
 
-router.post('/confirm', ModController.modConfirmed);
+router.post('/confirm/topic-schedule-room', ModController.modConfirmed);
 
-router.post('/cancel', ModController.modCanceled);
+router.post('/cancel/topic-schedule-room', ModController.topicScheduleRoomCanceled);
+
+router.post('/cancel/schedule')
 
 export default router;

@@ -1,4 +1,4 @@
-import { EVENT_MOD_CANCELED, EVENT_ROOM_CONFIRMED } from '@common/constants/event.constant';
+import { EVENT_TOPIC_ROOM_CANCELED, EVENT_ROOM_CONFIRMED } from '@common/constants/event.constant';
 import eventBus from '@common/event-bus';
 import logger from '@common/logger';
 import { IModCanceled, IModConfirm } from './mod.interface';
@@ -9,7 +9,7 @@ import { ModService } from './mod.service';
 
 export class ModEvent {
     public static register() {
-        eventBus.on(EVENT_MOD_CANCELED, ModEvent.modCanceledHandler);
+        eventBus.on(EVENT_TOPIC_ROOM_CANCELED, ModEvent.modCanceledHandler);
 
         eventBus.on(EVENT_ROOM_CONFIRMED, ModEvent.roomConfirmedHandler);
     }

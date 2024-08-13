@@ -16,7 +16,7 @@ import TopicScheduleRoom, {
     ITopicScheduleRoom,
 } from '@common/topic-schedule-room/Topic-schedule-room.model';
 import { RoomStatus } from '@common/topic-schedule-room/topic-schedule-room-status';
-import { EVENT_MOD_CANCELED, EVENT_ROOM_CONFIRMED } from '@common/constants/event.constant';
+import { EVENT_TOPIC_ROOM_CANCELED, EVENT_ROOM_CONFIRMED } from '@common/constants/event.constant';
 import User, { IUser } from '@common/user/User.model';
 import { IUserEvent } from '@common/user/user.interface';
 
@@ -43,9 +43,9 @@ export class ModService {
         }
     }
 
-    static async getModeSchedules(req: IModSchedules): Promise<any> {
+    static async getModeSchedules(mod_id: IModSchedules): Promise<any> {
         try {
-            return await ModSchedule.find({ _id: req.mod_id });
+            return await ModSchedule.find({ mod_id });
         } catch (error) {
             logger.error(error.message);
             throw new Error(error.message);
@@ -98,7 +98,7 @@ export class ModService {
         }
     }
 
-    static async modCanceled(req: IModCanceled): Promise<ITopicScheduleRoom> {
+    static async topicScheduleRoomCanceled(req: IModCanceled): Promise<ITopicScheduleRoom> {
         try {
             const data = await TopicScheduleRoom.findOneAndUpdate(
                 {
@@ -113,7 +113,7 @@ export class ModService {
             if (!data)
                 throw new Error('cannot canceled this schedule, topic_schedule_room not found!');
             else {
-                eventBus.emit(EVENT_MOD_CANCELED, { user_id: data.user_id });
+                eventBus.emit(EVENT_TOPIC_ROOM_CANCELED, { user_id: data.user_id });
                 return data;
             }
         } catch (error) {

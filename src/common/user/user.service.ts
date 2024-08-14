@@ -40,12 +40,7 @@ export class UserService {
         try {
             const modScheduleId = req.mod_schedule_id;
 
-            const checkData = await ModSchedule.findOneAndUpdate(
-                { _id: modScheduleId, is_available: true },
-                {
-                    is_available: false,
-                },
-            );
+            const checkData = await ModSchedule.findOne({ _id: modScheduleId, is_available: true });
 
             if (checkData) return true;
             else return false;

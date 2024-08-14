@@ -53,8 +53,16 @@ export class ModService {
 
     static async modScheduled(req: IModScheduling): Promise<IModSchedule[]> {
         try {
+            const modScheduleDatas = await ModSchedule.find({ mod_id: req.mod_id });
+
             new GenerateTime(req.mod_id, req.type, new Date(req.date));
-            const generateTime = GenerateTime.generate();
+            let generateTime = GenerateTime.generate();
+
+            // generateTime = generateTime.map((e) => {
+            //     for (const modScheduleData of modScheduleDatas) {
+            //         if (e.start_time === modScheduleData.start_time)
+            //     }
+            // })
 
             let data = await ModSchedule.insertMany(generateTime);
 
@@ -80,7 +88,12 @@ export class ModService {
             if (!data)
                 throw new Error('cannot confirmed this schedule, topic_schedule_room not found!');
             else {
-                const modScheduleData = await ModSchedule.findById(data.mod_schedule_id);
+                const modScheduleData = await ModSchedule.findOneAndUpdate(
+                    {
+                        _id: data.mod_schedule_id,
+                    },
+                    { is_available: false },
+                );
 
                 if (!modScheduleData) throw new Error('modScheduleData is empty!');
                 else {

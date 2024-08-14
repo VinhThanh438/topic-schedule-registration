@@ -6,7 +6,6 @@ export interface IModScheduleResponse {
     start_time: Date;
     end_time: Date;
     is_available: boolean;
-    is_deleted: boolean;
 }
 
 export interface IModSchedule extends Document {
@@ -36,7 +35,6 @@ ModScheduleSchema.method({
             start_time: new Date(this.start_time),
             end_time: new Date(this.end_time),
             is_available: this.is_available,
-            is_deleted: this.is_deleted,
         };
 
         return transformed;

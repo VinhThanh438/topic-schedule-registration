@@ -1,33 +1,39 @@
 import logger from '@common/logger';
-import { IModConfirm, IModCreate, IModSchedules, IModScheduling } from '@common/mod/mod.interface';
+import {
+    IModCanceled,
+    IModConfirm,
+    IModCreate,
+    IModSchedules,
+    IModScheduling,
+} from '@common/mod/mod.interface';
 import { ModService } from '@common/mod/mod.service';
 import { StatusCode } from '@config/status-code';
 import { Request, Response } from 'express';
 
 export class ModController {
-    static async create(req: Request, res: Response): Promise<void> {
+    static async createMod(req: Request, res: Response): Promise<void> {
         try {
             const body = req.body as any;
-            await ModService.create(body as IModCreate);
+
+            await ModService.createMod(body as IModCreate);
+
             res.status(StatusCode.CREATED).json({
                 message: 'success!',
             });
         } catch (error) {
-            logger.error(error.message);
             res.status(StatusCode.REQUEST_FORBIDDEN).json({ message: error.message });
         }
     }
 
-    static async getOnlineMod(req: Request, res: Response): Promise<void> {
+    static async getOnlines(req: Request, res: Response): Promise<void> {
         try {
-            const data = await ModService.getOnlineMod();
+            const data = await ModService.getOnlines();
 
             res.status(StatusCode.OK).json({
                 message: 'success!',
                 data,
             });
         } catch (error) {
-            logger.error(error.message);
             res.status(StatusCode.REQUEST_FORBIDDEN).json({ message: error.message });
         }
     }
@@ -36,64 +42,80 @@ export class ModController {
         try {
             const mod_id = req.params.modid;
 
-            const data = await ModService.getModeSchedules(mod_id as any);
+            let data = await ModService.getModeSchedules(mod_id as any);
 
             if (data.length === 0)
                 res.status(StatusCode.REQUEST_NOT_FOUND).json({
                     message: 'cannot found mod schedule',
                 });
+            // transformed data
+            data = data.map((element) => (element = element.transform()));
 
             res.status(StatusCode.OK).json({
                 message: 'success!',
                 data,
             });
         } catch (error) {
-            logger.error(error.message);
             res.status(StatusCode.REQUEST_FORBIDDEN).json({ message: error.message });
         }
     }
 
-    static async modScheduling(req: Request, res: Response): Promise<void> {
+    static async modScheduled(req: Request, res: Response): Promise<void> {
         try {
             const body = req.body as any;
 
-            const data = await ModService.modScheduling(body as IModScheduling);
+            const data = await ModService.modScheduled(body as IModScheduling);
 
             res.status(StatusCode.CREATED).json({ message: 'success', data });
         } catch (error) {
-            logger.error(error.message);
             res.status(StatusCode.REQUEST_FORBIDDEN).json({ error: error.message });
         }
     }
 
-    static async modConfirmed(req: Request, res: Response): Promise<void> {
+    static async confirmTopicScheduleRoom(req: Request, res: Response): Promise<void> {
         try {
             const body = req.body as any;
 
-            const data = await ModService.modConfirmed(body as IModConfirm);
+            const data = await ModService.confirmTopicScheduleRoom(body as IModConfirm);
 
             res.status(StatusCode.CREATED).json({
                 message: 'Mod confirmed successfully!',
                 data,
             });
         } catch (error) {
-            logger.error(error.message);
             res.status(StatusCode.REQUEST_FORBIDDEN).json({ error: error.message });
         }
     }
 
-    static async topicScheduleRoomCanceled(req: Request, res: Response): Promise<void> {
+    static async cancelTopicScheduleRoom(req: Request, res: Response): Promise<void> {
         try {
             const body = req.body as any;
 
-            const data = await ModService.topicScheduleRoomCanceled(body as any);
+            const data = await ModService.cancelTopicScheduleRoom(body as any);
 
             res.status(StatusCode.CREATED).json({
                 message: 'Mod canceled successfully!',
                 data,
             });
         } catch (error) {
-            logger.error(error.message);
+            res.status(StatusCode.REQUEST_FORBIDDEN).json({ error: error.message });
+        }
+    }
+
+    static async cancelModSchedule(req: Request, res: Response): Promise<void> {
+        try {
+            const body = req.body as any;
+
+            const check = await ModService.cancelModSchedule(body as IModSchedules);
+            if (check)
+                res.status(StatusCode.OK).json({
+                    message: 'Mod schedule deleted successfully!',
+                });
+            else
+                res.status(StatusCode.REQUEST_NOT_FOUND).json({
+                    message: 'Mod schedule not found!',
+                });
+        } catch (error) {
             res.status(StatusCode.REQUEST_FORBIDDEN).json({ error: error.message });
         }
     }

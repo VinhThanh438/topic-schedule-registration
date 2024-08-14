@@ -7,7 +7,6 @@ import {
     IModScheduling,
 } from './mod.interface';
 import Mod from './Mod.model';
-import mongoose from 'mongoose';
 import logger from '@common/logger';
 import eventBus from '@common/event-bus';
 import { ModStatus } from './mod-status';
@@ -21,7 +20,7 @@ import User, { IUser } from '@common/user/User.model';
 import { IUserEvent } from '@common/user/user.interface';
 
 export class ModService {
-    static async create(req: IModCreate): Promise<void> {
+    static async createMod(req: IModCreate): Promise<void> {
         try {
             await Mod.create(
                 new Mod({
@@ -34,7 +33,7 @@ export class ModService {
         }
     }
 
-    static async getOnlineMod(): Promise<any> {
+    static async getOnlines(): Promise<any> {
         try {
             return await Mod.find({ status: ModStatus.ONLINE });
         } catch (error) {
@@ -45,14 +44,14 @@ export class ModService {
 
     static async getModeSchedules(mod_id: IModSchedules): Promise<any> {
         try {
-            return await ModSchedule.find({ mod_id });
+            return await ModSchedule.find({ mod_id, is_deleted: false });
         } catch (error) {
             logger.error(error.message);
             throw new Error(error.message);
         }
     }
 
-    static async modScheduling(req: IModScheduling): Promise<any> {
+    static async modScheduled(req: IModScheduling): Promise<any> {
         try {
             new GenerateTime(req.mod_id, req.type, new Date(req.date));
             const generateTime = GenerateTime.generate();
@@ -66,7 +65,7 @@ export class ModService {
         }
     }
 
-    static async modConfirmed(req: IModConfirm): Promise<ITopicScheduleRoom> {
+    static async confirmTopicScheduleRoom(req: IModConfirm): Promise<ITopicScheduleRoom> {
         try {
             const data = await TopicScheduleRoom.findOneAndUpdate(
                 {
@@ -98,7 +97,7 @@ export class ModService {
         }
     }
 
-    static async topicScheduleRoomCanceled(req: IModCanceled): Promise<ITopicScheduleRoom> {
+    static async cancelTopicScheduleRoom(req: IModCanceled): Promise<ITopicScheduleRoom> {
         try {
             const data = await TopicScheduleRoom.findOneAndUpdate(
                 {
@@ -131,6 +130,25 @@ export class ModService {
 
             if (!userData) throw new Error('cannot update remaining_lessions. User not found!');
             else return userData;
+        } catch (error) {
+            logger.error(error.message);
+            throw new Error(error.message);
+        }
+    }
+
+    static async cancelModSchedule(req: IModSchedules): Promise<boolean> {
+        try {
+            const data = await ModSchedule.findOneAndUpdate(
+                {
+                    _id: req.mod_schedule_id,
+                },
+                {
+                    is_deleted: true,
+                },
+            );
+
+            if (data) return true;
+            else return false;
         } catch (error) {
             logger.error(error.message);
             throw new Error(error.message);

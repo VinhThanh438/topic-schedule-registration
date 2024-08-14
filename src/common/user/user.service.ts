@@ -23,10 +23,10 @@ export class UserService {
         }
     }
 
-    static async checkRemainingLession(req: IUserScheduling): Promise<Boolean> {
+    static async checkRemainingLession(userId: string): Promise<Boolean> {
         try {
             const userData = await User.findOne({
-                _id: req.user_id,
+                _id: userId,
                 remaining_lessions: { $lte: 0 },
             });
 

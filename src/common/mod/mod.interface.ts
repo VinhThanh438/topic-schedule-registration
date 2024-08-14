@@ -9,6 +9,7 @@ export interface IModScheduling {
 }
 
 export interface IModSchedules {
+    mod_schedule_id: string;
     mod_id: string;
 }
 

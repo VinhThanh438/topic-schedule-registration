@@ -1,11 +1,4 @@
-import logger from '@common/logger';
-import {
-    IModCanceled,
-    IModConfirm,
-    IModCreate,
-    IModSchedules,
-    IModScheduling,
-} from '@common/mod/mod.interface';
+import { IModConfirm, IModCreate, IModSchedules, IModScheduling } from '@common/mod/mod.interface';
 import { ModService } from '@common/mod/mod.service';
 import { StatusCode } from '@config/status-code';
 import { Request, Response } from 'express';
@@ -27,7 +20,9 @@ export class ModController {
 
     static async getOnlines(req: Request, res: Response): Promise<void> {
         try {
-            const data = await ModService.getOnlines();
+            let data = await ModService.getOnlines();
+
+            data = data.map((element) => (element = element.transform()));
 
             res.status(StatusCode.OK).json({
                 message: 'success!',
@@ -48,7 +43,7 @@ export class ModController {
                 res.status(StatusCode.REQUEST_NOT_FOUND).json({
                     message: 'cannot found mod schedule',
                 });
-            // transformed data
+
             data = data.map((element) => (element = element.transform()));
 
             res.status(StatusCode.OK).json({

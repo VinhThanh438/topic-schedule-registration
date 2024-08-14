@@ -10,13 +10,13 @@ import Mod from './Mod.model';
 import logger from '@common/logger';
 import eventBus from '@common/event-bus';
 import { ModStatus } from './mod-status';
-import ModSchedule from '@common/mod_schedule/Mod-schedule.model';
+import ModSchedule, { IModSchedule } from '@common/mod_schedule/Mod-schedule.model';
 import TopicScheduleRoom, {
-    ITopicScheduleRoom,
+    ITopicScheduleRoomResponse,
 } from '@common/topic-schedule-room/Topic-schedule-room.model';
 import { RoomStatus } from '@common/topic-schedule-room/topic-schedule-room-status';
 import { EVENT_TOPIC_ROOM_CANCELED, EVENT_ROOM_CONFIRMED } from '@common/constants/event.constant';
-import User, { IUser } from '@common/user/User.model';
+import User, { IUserResponse } from '@common/user/User.model';
 import { IUserEvent } from '@common/user/user.interface';
 
 export class ModService {
@@ -51,12 +51,12 @@ export class ModService {
         }
     }
 
-    static async modScheduled(req: IModScheduling): Promise<any> {
+    static async modScheduled(req: IModScheduling): Promise<IModSchedule[]> {
         try {
             new GenerateTime(req.mod_id, req.type, new Date(req.date));
             const generateTime = GenerateTime.generate();
 
-            const data = await ModSchedule.insertMany(generateTime);
+            let data = await ModSchedule.insertMany(generateTime);
 
             return data;
         } catch (error) {
@@ -65,7 +65,7 @@ export class ModService {
         }
     }
 
-    static async confirmTopicScheduleRoom(req: IModConfirm): Promise<ITopicScheduleRoom> {
+    static async confirmTopicScheduleRoom(req: IModConfirm): Promise<ITopicScheduleRoomResponse> {
         try {
             const data = await TopicScheduleRoom.findOneAndUpdate(
                 {
@@ -88,7 +88,7 @@ export class ModService {
                         schedule_room_id: data._id,
                         start_time: modScheduleData.start_time,
                     });
-                    return data;
+                    return data.transform();
                 }
             }
         } catch (error) {
@@ -97,7 +97,7 @@ export class ModService {
         }
     }
 
-    static async cancelTopicScheduleRoom(req: IModCanceled): Promise<ITopicScheduleRoom> {
+    static async cancelTopicScheduleRoom(req: IModCanceled): Promise<ITopicScheduleRoomResponse> {
         try {
             const data = await TopicScheduleRoom.findOneAndUpdate(
                 {
@@ -113,7 +113,7 @@ export class ModService {
                 throw new Error('cannot canceled this schedule, topic_schedule_room not found!');
             else {
                 eventBus.emit(EVENT_TOPIC_ROOM_CANCELED, { user_id: data.user_id });
-                return data;
+                return data.transform();
             }
         } catch (error) {
             logger.error(error.message);
@@ -121,7 +121,7 @@ export class ModService {
         }
     }
 
-    static async lessionRefund(req: IUserEvent): Promise<IUser> {
+    static async lessionRefund(req: IUserEvent): Promise<IUserResponse> {
         try {
             const userData = await User.findOneAndUpdate(
                 { _id: req.user_id },
@@ -129,7 +129,7 @@ export class ModService {
             );
 
             if (!userData) throw new Error('cannot update remaining_lessions. User not found!');
-            else return userData;
+            else return userData.transform();
         } catch (error) {
             logger.error(error.message);
             throw new Error(error.message);

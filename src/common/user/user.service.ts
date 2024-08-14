@@ -1,12 +1,10 @@
 import logger from '@common/logger';
-import { IUserCreate, IUserEvent, IUserScheduling } from './user.interface';
+import { IUserCreate, IUserScheduling } from './user.interface';
 import User from './User.model';
 import eventBus from '@common/event-bus';
-import { EVENT_TOPIC_ROOM_CREATED } from '@common/constants/event.constant';
 import TopicScheduleRoom, {
     ITopicScheduleRoom,
 } from '@common/topic-schedule-room/Topic-schedule-room.model';
-import mongoose from 'mongoose';
 import ModSchedule from '@common/mod_schedule/Mod-schedule.model';
 
 export class UserService {
@@ -42,10 +40,15 @@ export class UserService {
         try {
             const modScheduleId = req.mod_schedule_id;
 
-            const checkData = await ModSchedule.find({ _id: modScheduleId, is_available: false });
+            const checkData = await ModSchedule.findOneAndUpdate(
+                { _id: modScheduleId, is_available: true },
+                {
+                    is_available: false,
+                },
+            );
 
-            if (checkData.length !== 0) return false;
-            else return true;
+            if (checkData) return true;
+            else return false;
         } catch (error) {
             logger.error(error.message);
             throw new Error(error.message);
@@ -72,22 +75,9 @@ export class UserService {
             } else {
                 logger.info('userData not found');
             }
-
-            eventBus.emit(EVENT_TOPIC_ROOM_CREATED, {
-                // user_id: req.user_id,
-                mod_schedule_id: req.mod_schedule_id,
-            });
         } catch (error) {
             logger.error(error.message);
             throw new Error(error.message);
         }
     }
-
-    // static async updateRemainingLession(req: IUserEvent): Promise<void> {
-    //     try {
-    //     } catch (error) {
-    //         logger.error(error.message);
-    //         throw new Error(error.message);
-    //     }
-    // }
 }

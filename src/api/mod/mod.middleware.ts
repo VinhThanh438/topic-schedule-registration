@@ -1,5 +1,4 @@
 import logger from '@common/logger';
-import { IUserScheduling } from '@common/user/user.interface';
 import { UserService } from '@common/user/user.service';
 import { StatusCode } from '@config/status-code';
 import { NextFunction, Request, Response } from 'express';

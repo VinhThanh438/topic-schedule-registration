@@ -4,6 +4,7 @@ import { DatabaseAdapter } from '@common/infrastructure/mongo.adapter';
 import { RedisAdapter } from '@common/infrastructure/redis.adapter';
 import { UserEvent } from '@common/user/user.event';
 import { ModEvent } from '@common/mod/mod.event';
+import { TopicRoomSheduleJob } from '@common/topic-schedule-room/topic-schedule-room.schedule';
 
 export class Application {
     public static async createApp(): Promise<ExpressServer> {
@@ -11,6 +12,7 @@ export class Application {
         await RedisAdapter.connect();
 
         this.registerEvent();
+        this.registerScheduleJob();
 
         const expressServer = new ExpressServer();
         expressServer.setup(PORT);
@@ -21,5 +23,9 @@ export class Application {
     public static registerEvent() {
         UserEvent.register();
         ModEvent.register();
+    }
+
+    public static registerScheduleJob() {
+        TopicRoomSheduleJob.register();
     }
 }

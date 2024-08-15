@@ -10,12 +10,12 @@ import Mod from './Mod.model';
 import logger from '@common/logger';
 import eventBus from '@common/event-bus';
 import { ModStatus } from './mod-status';
-import ModSchedule, { IModSchedule } from '@common/mod_schedule/Mod-schedule.model';
+import ModSchedule from '@common/mod_schedule/Mod-schedule.model';
 import TopicScheduleRoom, {
     ITopicScheduleRoomResponse,
 } from '@common/topic-schedule-room/Topic-schedule-room.model';
 import { RoomStatus } from '@common/topic-schedule-room/topic-schedule-room-status';
-import { EVENT_TOPIC_ROOM_CANCELED, EVENT_ROOM_CONFIRMED } from '@common/constants/event.constant';
+import { EVENT_TOPIC_ROOM_CANCELED } from '@common/constants/event.constant';
 import User, { IUserResponse } from '@common/user/User.model';
 import { IUserEvent } from '@common/user/user.interface';
 
@@ -56,13 +56,13 @@ export class ModService {
             new GenerateTime(req.mod_id, req.type, new Date(req.date));
             let generateTime = GenerateTime.generate();
 
-            const bulkOperations = generateTime.map(data => ({
+            const bulkOperations = generateTime.map((data) => ({
                 updateOne: {
-                  filter: { mod_id: req.mod_id, start_time: data.start_time },
-                  update: { $setOnInsert: data, is_available: true },
-                  upsert: true
-                }
-              }));
+                    filter: { mod_id: req.mod_id, start_time: data.start_time },
+                    update: { $setOnInsert: data, is_available: true },
+                    upsert: true,
+                },
+            }));
 
             const result = await ModSchedule.bulkWrite(bulkOperations);
 
@@ -81,7 +81,7 @@ export class ModService {
                     status: RoomStatus.PENDING,
                 },
                 {
-                    status: RoomStatus.CONFIRMED,
+                    status: RoomStatus.MOD_CONFIRMED,
                 },
             );
 
@@ -96,13 +96,7 @@ export class ModService {
                 );
 
                 if (!modScheduleData) throw new Error('modScheduleData is empty!');
-                else {
-                    eventBus.emit(EVENT_ROOM_CONFIRMED, {
-                        schedule_room_id: data._id,
-                        start_time: modScheduleData.start_time,
-                    });
-                    return data.transform();
-                }
+                else return data.transform();
             }
         } catch (error) {
             logger.error(error.message);
@@ -115,7 +109,7 @@ export class ModService {
             const data = await TopicScheduleRoom.findOneAndUpdate(
                 {
                     _id: req.schedule_room_id,
-                    status: { $in: [RoomStatus.PENDING, RoomStatus.CONFIRMED] },
+                    status: { $in: [RoomStatus.PENDING, RoomStatus.MOD_CONFIRMED] },
                 },
                 {
                     status: RoomStatus.MOD_CANCELED,

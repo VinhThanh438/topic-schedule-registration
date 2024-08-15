@@ -8,7 +8,7 @@ export class TopicScheduleRoomService {
         try {
             const data = await TopicScheduleRoom.findOne({
                 _id: req,
-                status: RoomStatus.CONFIRMED,
+                status: RoomStatus.SYSTEM_CONFIRMED,
             });
             return data;
         } catch (error) {

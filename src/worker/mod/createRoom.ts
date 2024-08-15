@@ -11,10 +11,6 @@ export class CreateRoom {
 
         logger.info(`listening to queue ${CREATE_ROOM_AFTER_CONFIRMATION}`);
 
-        const timeDelayToCleanJob = 5000;
-        const jobStatus = 'delayed';
-
-        await queue.clean(timeDelayToCleanJob, jobStatus);
         await queue.add({ job: CREATE_ROOM_AFTER_CONFIRMATION });
         await queue.process(CreateRoom.handler);
 

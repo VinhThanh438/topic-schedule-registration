@@ -1,5 +1,5 @@
 import logger from '@common/logger';
-import { IUserScheduling } from '@common/user/user.interface';
+import { IUserScheduled } from '@common/user/user.interface';
 import { UserService } from '@common/user/user.service';
 import { StatusCode } from '@config/status-code';
 import { NextFunction, Request, Response } from 'express';
@@ -13,7 +13,7 @@ export class UserMiddleware {
         try {
             const body = req.body as any;
 
-            const check = await UserService.checkDuplicateSchedule(body as IUserScheduling);
+            const check = await UserService.checkDuplicateSchedule(body as IUserScheduled);
 
             if (!check) throw new Error('user has been booked this time');
             else next();

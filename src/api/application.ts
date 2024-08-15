@@ -4,7 +4,7 @@ import { DatabaseAdapter } from '@common/infrastructure/mongo.adapter';
 import { RedisAdapter } from '@common/infrastructure/redis.adapter';
 import { UserEvent } from '@common/user/user.event';
 import { ModEvent } from '@common/mod/mod.event';
-import { TopicRoomSheduleJob } from '@common/topic-schedule-room/topic-schedule-room.schedule';
+import { TopicRoomSheduleJob } from '@common/topic-schedule-room/topic-schedule-room.schedule-job';
 
 export class Application {
     public static async createApp(): Promise<ExpressServer> {

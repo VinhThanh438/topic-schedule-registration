@@ -5,6 +5,8 @@ const router = express.Router();
 
 router.post('/create', UserController.createUser);
 
-router.post('/schedule', UserMiddleware.checkDuplicateSchedule, UserController.userScheduling);
+router.post('/schedule', UserMiddleware.checkDuplicateSchedule, UserController.userScheduled);
+
+router.post('/cancel/schedule', UserController.cancelSchedule)
 
 export default router;

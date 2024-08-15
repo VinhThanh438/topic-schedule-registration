@@ -1,11 +1,11 @@
 import logger from '@common/logger';
-import { IUserCreate, IUserScheduling } from './user.interface';
+import { IUserCreate, IUserScheduled } from './user.interface';
 import User from './User.model';
-import eventBus from '@common/event-bus';
 import TopicScheduleRoom, {
     ITopicScheduleRoom,
 } from '@common/topic-schedule-room/Topic-schedule-room.model';
 import ModSchedule from '@common/mod_schedule/Mod-schedule.model';
+import { RoomStatus } from '@common/topic-schedule-room/topic-schedule-room-status';
 
 export class UserService {
     static async createUser(req: IUserCreate): Promise<void> {
@@ -36,7 +36,7 @@ export class UserService {
         }
     }
 
-    static async checkDuplicateSchedule(req: IUserScheduling): Promise<Boolean> {
+    static async checkDuplicateSchedule(req: IUserScheduled): Promise<Boolean> {
         try {
             const modScheduleId = req.mod_schedule_id;
 
@@ -50,7 +50,7 @@ export class UserService {
         }
     }
 
-    static async userScheduling(req: IUserScheduling): Promise<ITopicScheduleRoom> {
+    static async userScheduled(req: IUserScheduled): Promise<ITopicScheduleRoom> {
         try {
             const userData = await User.findOneAndUpdate(
                 { _id: req.user_id },
@@ -70,6 +70,20 @@ export class UserService {
             } else {
                 logger.info('userData not found');
             }
+        } catch (error) {
+            logger.error(error.message);
+            throw new Error(error.message);
+        }
+    }
+
+    static async cancelSchedule(req: any): Promise<ITopicScheduleRoom> {
+        try {
+            const data = await TopicScheduleRoom.findOneAndUpdate({
+                _id: req.topic_schedule_id
+            }, {
+                status: RoomStatus.USER_CANCELED
+            })
+            return data
         } catch (error) {
             logger.error(error.message);
             throw new Error(error.message);

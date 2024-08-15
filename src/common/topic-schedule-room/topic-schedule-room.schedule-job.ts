@@ -5,6 +5,8 @@ import { CRON_TIME } from '@common/constants/cron-job.constant';
 import { RoomStatus } from './topic-schedule-room-status';
 import { QueueService } from '@common/queue/queue.service';
 import { CREATE_ROOM_AFTER_CONFIRMATION } from '@common/constants/job.constant';
+import generateDelayTime from '@common/utils/generate-delay-time';
+import ModSchedule from '@common/mod_schedule/Mod-schedule.model';
 
 export class TopicRoomSheduleJob {
     public static register() {
@@ -20,16 +22,29 @@ export class TopicRoomSheduleJob {
                 status: RoomStatus.MOD_CONFIRMED,
             });
 
-            if (!getModConfirmed) return;
+            if (getModConfirmed.length === 0) return;
             else {
-                await TopicScheduleRoom.updateMany({
-                    status: RoomStatus.MOD_CONFIRMED
-                }, {
-                    status: RoomStatus.SYSTEM_CONFIRMED
-                })
-                
-                getModConfirmed.map((element) => {
-                    queue.add({ schedule_room_id: element._id.toString()})
+                // update status
+                await TopicScheduleRoom.updateMany(
+                    {
+                        status: RoomStatus.MOD_CONFIRMED,
+                    },
+                    {
+                        status: RoomStatus.SYSTEM_CONFIRMED,
+                    },
+                );
+
+                // add queue
+                getModConfirmed.map(async (element) => {
+                    const getModSchedule = await ModSchedule.findById(element.mod_schedule_id);
+                    const delayTime = generateDelayTime(getModSchedule.start_time.toISOString());
+
+                    queue.add(
+                        { schedule_room_id: element._id.toString() },
+                        {
+                            repeat: { cron: delayTime },
+                        },
+                    );
                 });
             }
         } catch (error) {

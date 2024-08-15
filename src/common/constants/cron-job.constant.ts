@@ -1,1 +1,1 @@
-export const CRON_TIME = '*/5 * * * *';
+export const CRON_TIME = '*/1 * * * *';

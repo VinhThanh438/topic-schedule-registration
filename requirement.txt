@@ -41,7 +41,7 @@ auth cho len header) chuyen check remaining_lessions
 len lam middleware check cho get mod schedule
 - (done) findOneAndUpdate khong phai check trong middelware
     (check is_available middleware)
-- check start_time
+- (done) check start_time
 - them schedule job quet lich
 
 If (time) {

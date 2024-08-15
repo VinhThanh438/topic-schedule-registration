@@ -51,22 +51,22 @@ export class ModService {
         }
     }
 
-    static async modScheduled(req: IModScheduling): Promise<IModSchedule[]> {
+    static async modScheduled(req: IModScheduling): Promise<any> {
         try {
-            const modScheduleDatas = await ModSchedule.find({ mod_id: req.mod_id });
-
             new GenerateTime(req.mod_id, req.type, new Date(req.date));
             let generateTime = GenerateTime.generate();
 
-            // generateTime = generateTime.map((e) => {
-            //     for (const modScheduleData of modScheduleDatas) {
-            //         if (e.start_time === modScheduleData.start_time)
-            //     }
-            // })
+            const bulkOperations = generateTime.map(data => ({
+                updateOne: {
+                  filter: { mod_id: req.mod_id, start_time: data.start_time },
+                  update: { $setOnInsert: data, is_available: true },
+                  upsert: true
+                }
+              }));
 
-            let data = await ModSchedule.insertMany(generateTime);
+            const result = await ModSchedule.bulkWrite(bulkOperations);
 
-            return data;
+            return result.getRawResponse();
         } catch (error) {
             logger.error(error.message);
             throw new Error(error.message);

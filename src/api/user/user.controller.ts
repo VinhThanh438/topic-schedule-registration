@@ -39,19 +39,19 @@ export class UserController {
 
     static async cancelSchedule(req: Request, res: Response): Promise<void> {
         try {
-            const body = req.body as any
+            const body = req.body as any;
 
-            const data = await UserService.cancelSchedule(body as any)
+            const data = await UserService.cancelSchedule(body as any);
 
-            if (data) 
+            if (data)
                 res.status(StatusCode.OK).json({
-                message: 'User canceled successfully!',
-                data: data.transform(),
-            }) 
+                    message: 'User canceled successfully!',
+                    data: data.transform(),
+                });
             else {
                 res.status(StatusCode.REQUEST_FORBIDDEN).json({
-                    message: 'User cannot cancel!'
-                })
+                    message: 'User cannot cancel!',
+                });
             }
         } catch (error) {
             logger.error(error.message);

@@ -78,12 +78,15 @@ export class UserService {
 
     static async cancelSchedule(req: any): Promise<ITopicScheduleRoom> {
         try {
-            const data = await TopicScheduleRoom.findOneAndUpdate({
-                _id: req.topic_schedule_id
-            }, {
-                status: RoomStatus.USER_CANCELED
-            })
-            return data
+            const data = await TopicScheduleRoom.findOneAndUpdate(
+                {
+                    _id: req.topic_schedule_id,
+                },
+                {
+                    status: RoomStatus.USER_CANCELED,
+                },
+            );
+            return data;
         } catch (error) {
             logger.error(error.message);
             throw new Error(error.message);

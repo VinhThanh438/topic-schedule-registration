@@ -6,12 +6,12 @@ import TopicScheduleRoom, { ITopicScheduleRoom } from './Topic-schedule-room.mod
 export class TopicScheduleRoomService {
     static async getConfirmedRoom(req: IGetRoomConfirmed): Promise<ITopicScheduleRoom> {
         try {
-            const data = await TopicScheduleRoom.findOneAndUpdate({
-                _id: req,
-                status: RoomStatus.SYSTEM_CONFIRMED,
-            }, {
-                status: RoomStatus.ENDED
-            });
+            const data = await TopicScheduleRoom.findOne(
+                {
+                    _id: req,
+                    status: RoomStatus.SYSTEM_CONFIRMED,
+                }
+            );
             return data;
         } catch (error) {
             logger.error(error.message);

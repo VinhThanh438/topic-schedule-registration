@@ -42,7 +42,7 @@ export class TopicRoomSheduleJob {
                 {
                     // conditions
                     $match: {
-                        'status': RoomStatus.MOD_CONFIRMED,
+                        status: RoomStatus.MOD_CONFIRMED,
                         'mod_schedule.start_time': {
                             // start_time - 2 mins <= current time => start_time <= current_time + 2 mins
                             $lt: new Date(
@@ -71,8 +71,8 @@ export class TopicRoomSheduleJob {
                 // add queue
                 data.map(async (element) => {
                     await TopicScheduleRoom.findByIdAndUpdate(element._id, {
-                        status: RoomStatus.SYSTEM_CONFIRMED
-                    })
+                        status: RoomStatus.SYSTEM_CONFIRMED,
+                    });
                     queue.add({ schedule_room_id: element._id.toString() });
                 });
             }

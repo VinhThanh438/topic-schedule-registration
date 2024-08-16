@@ -20,19 +20,6 @@ import User, { IUserResponse } from '@common/user/User.model';
 import { IUserEvent } from '@common/user/user.interface';
 
 export class ModService {
-    static async createMod(req: IModCreate): Promise<void> {
-        try {
-            await Mod.create(
-                new Mod({
-                    mod_name: req.mod_name,
-                }),
-            );
-        } catch (error) {
-            logger.error(error.message);
-            throw new Error(error.message);
-        }
-    }
-
     static async getOnlines(): Promise<any> {
         try {
             return await Mod.find({ status: ModStatus.ONLINE });
@@ -44,7 +31,7 @@ export class ModService {
 
     static async getModeSchedules(mod_id: IModSchedules): Promise<any> {
         try {
-            return await ModSchedule.find({ mod_id, is_deleted: false });
+            return await ModSchedule.find({ mod_id, is_deleted: false, is_available: true });
         } catch (error) {
             logger.error(error.message);
             throw new Error(error.message);

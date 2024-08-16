@@ -1,11 +1,5 @@
 import { Joi, schema } from 'express-validation';
 
-export const createUser: schema = {
-    body: Joi.object({
-        user_name: Joi.string().required(),
-    }),
-};
-
 export const userScheduled: schema = {
     body: Joi.object({
         mod_id: Joi.string().required(),

@@ -128,4 +128,28 @@ export class RedisAdapter {
         }
         return value;
     }
+
+    static async get(key: string, shouldDeserialize = false): Promise<unknown> {
+        const value = await (await RedisAdapter.getClient()).get(key);
+        return shouldDeserialize ? RedisAdapter.deserialize(value) : value;
+    }
+
+    static async set(
+        key: string,
+        value: unknown,
+        ttl = 0,
+        shouldSerialize = false,
+    ): Promise<unknown> {
+        const stringValue: string = shouldSerialize
+            ? RedisAdapter.serialize(value)
+            : (value as string);
+        if (ttl > 0) {
+            return (await RedisAdapter.getClient()).set(key, stringValue, 'EX', ttl);
+        }
+        return (await RedisAdapter.getClient()).set(key, stringValue);
+    }
+
+    static async delete(key: string): Promise<unknown> {
+        return (await RedisAdapter.getClient()).del(key);
+    }
 }

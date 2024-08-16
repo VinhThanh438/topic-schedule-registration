@@ -9,13 +9,15 @@ export interface IUserResponse {
 export interface IUser extends Document {
     _id: Schema.Types.ObjectId;
     user_name: string;
+    password: string;
     remaining_lessions: number;
 
     transform(): IUserResponse;
 }
 
 const UserSchema: Schema<IUser> = new Schema({
-    user_name: { type: String, required: true, default: null },
+    user_name: { type: String, required: true },
+    password: { type: String, required: true },
     remaining_lessions: { type: Number, required: true, default: 3 },
 });
 

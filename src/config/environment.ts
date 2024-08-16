@@ -13,3 +13,7 @@ export const MONGO_URI = process.env.MONGO_URI;
 export const REDIS_URI = process.env.REDIS_URI;
 
 export const LOG_LEVEL = process.env.LOG_LEVEL;
+
+export const ACCESSTOKEN_KEY: string = process.env.JWT_ACCESSTOKEN_KEY;
+
+export const REFRESHTOKEN_KEY: string = process.env.JWT_REFRESHTOKEN_KEY;

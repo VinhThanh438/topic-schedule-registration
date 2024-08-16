@@ -1,16 +1,10 @@
 import { Joi, schema } from 'express-validation';
 
-export const createMod: schema = {
-    body: Joi.object({
-        mod_name: Joi.string().required(),
-    }),
-};
-
 export const createModSchedule: schema = {
     body: Joi.object({
         mod_id: Joi.string().required(),
         type: Joi.string().required(),
-        date: Joi.date().required(),
+        date: Joi.string().required(),
     }),
 };
 

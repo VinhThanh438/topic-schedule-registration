@@ -2,15 +2,8 @@ import express from 'express';
 import { ModController } from './mod.controller';
 import { ModMiddleware } from './mod.middleware';
 import { validate } from 'express-validation';
-import {
-    cancelSchedule,
-    createMod,
-    createModSchedule,
-    handleTopicScheduleRoom,
-} from './mod.validator';
+import { cancelSchedule, createModSchedule, handleTopicScheduleRoom } from './mod.validator';
 const router = express.Router();
-
-router.post('/create', validate(createMod, { context: true }), ModController.createMod);
 
 router.get('/online', ModController.getOnlines);
 
@@ -27,19 +20,19 @@ router.post(
 );
 
 router.post(
-    '/confirm/topic-schedule-room',
+    '/topic-schedule-room/confirm',
     validate(handleTopicScheduleRoom, { context: true }),
     ModController.confirmTopicScheduleRoom,
 );
 
 router.post(
-    '/cancel/topic-schedule-room',
+    '/topic-schedule-room/cancel',
     validate(handleTopicScheduleRoom, { context: true }),
     ModController.cancelTopicScheduleRoom,
 );
 
 router.post(
-    '/cancel/schedule',
+    '/schedule/cancel',
     validate(cancelSchedule, { context: true }),
     ModController.cancelModSchedule,
 );

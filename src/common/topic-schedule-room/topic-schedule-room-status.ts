@@ -4,5 +4,4 @@ export enum RoomStatus {
     SYSTEM_CONFIRMED = 'system-confirmed',
     MOD_CANCELED = 'mod-canceled',
     USER_CANCELED = 'user-canceled',
-    ENDED = 'ended',
 }

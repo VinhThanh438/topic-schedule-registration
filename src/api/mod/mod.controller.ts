@@ -4,20 +4,6 @@ import { StatusCode } from '@config/status-code';
 import { Request, Response } from 'express';
 
 export class ModController {
-    static async createMod(req: Request, res: Response): Promise<void> {
-        try {
-            const body = req.body as any;
-
-            await ModService.createMod(body as IModCreate);
-
-            res.status(StatusCode.CREATED).json({
-                message: 'success!',
-            });
-        } catch (error) {
-            res.status(StatusCode.REQUEST_FORBIDDEN).json({ message: error.message });
-        }
-    }
-
     static async getOnlines(req: Request, res: Response): Promise<void> {
         try {
             let data = await ModService.getOnlines();

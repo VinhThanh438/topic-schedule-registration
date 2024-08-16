@@ -23,7 +23,7 @@ export class TopicRoomSheduleJob {
                 currentTime.getTime() - offsetInMinutes * 60 * 1000,
             );
 
-            let data = await TopicScheduleRoom.aggregate([
+            const data = await TopicScheduleRoom.aggregate([
                 {
                     // convert mod_schedule_id from string to object id
                     $addFields: {
@@ -38,13 +38,14 @@ export class TopicRoomSheduleJob {
                         as: 'mod_schedule',
                     },
                 },
-                { $unwind: '$mod_schedule' }, // parse data in mod_schedule field from array to object
+                { $unwind: '$mod_schedule' },
+                // parse data in mod_schedule field from array to object
                 {
                     // conditions
                     $match: {
                         status: RoomStatus.MOD_CONFIRMED,
                         'mod_schedule.start_time': {
-                            // start_time - 2 mins <= current time => start_time <= current_time + 2 mins
+                            // start_time - 2 mins <= current time -> start_time <= current_time + 2 mins
                             $lt: new Date(
                                 new Date(
                                     currentTimeAdjusted.getTime() + 2 * 60 * 1000,

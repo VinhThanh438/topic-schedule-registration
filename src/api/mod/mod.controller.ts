@@ -57,11 +57,10 @@ export class ModController {
         try {
             const body = req.body as any;
 
-            const data = await ModService.confirmTopicScheduleRoom(body as IModConfirm);
+            await ModService.confirmTopicScheduleRoom(body as IModConfirm);
 
             res.status(StatusCode.CREATED).json({
                 message: 'Mod confirmed successfully!',
-                data,
             });
         } catch (error) {
             res.status(StatusCode.REQUEST_FORBIDDEN).json({ error: error.message });
@@ -83,6 +82,21 @@ export class ModController {
         }
     }
 
+    static async cancelConfirmation(req: Request, res: Response): Promise<void> {
+        try {
+            const body = req.body as any;
+
+            const data = await ModService.cancelConfirmation(body as any);
+
+            res.status(StatusCode.CREATED).json({
+                message: 'Mod canceled successfully!',
+                data,
+            });
+        } catch (error) {
+            res.status(StatusCode.REQUEST_FORBIDDEN).json({ error: error.message });
+        }
+    }
+
     static async cancelModSchedule(req: Request, res: Response): Promise<void> {
         try {
             const body = req.body as any;
@@ -90,7 +104,7 @@ export class ModController {
             const check = await ModService.cancelModSchedule(body as IModSchedules);
             if (check)
                 res.status(StatusCode.OK).json({
-                    message: 'Mod schedule deleted successfully!',
+                    message: 'Mod schedule canceled successfully!',
                 });
             else
                 res.status(StatusCode.REQUEST_NOT_FOUND).json({

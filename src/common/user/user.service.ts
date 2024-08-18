@@ -36,14 +36,14 @@ export class UserService {
         }
     }
 
-    static async checkDuplicateSchedule(req: IUserScheduled): Promise<Boolean> {
+    static async checkAvailableSchedule(req: IUserScheduled): Promise<Boolean> {
         try {
             const modScheduleId = req.mod_schedule_id;
 
             const checkData = await ModSchedule.findOne({ _id: modScheduleId, is_available: true });
 
             if (checkData) return true;
-            else return false;
+            return false;
         } catch (error) {
             logger.error(error.message);
             throw new Error(error.message);

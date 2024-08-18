@@ -4,7 +4,7 @@ import { isTokenExpried, Token } from '@config/token';
 import { Request, Response, NextFunction } from 'express';
 import jwt, { JwtPayload } from 'jsonwebtoken';
 
-export class AuthMidleware {
+export class Authentication {
     public static async requireAuth(req: Request, res: Response, next: NextFunction) {
         try {
             const accessToken = req.headers.accesstoken as string;
@@ -23,7 +23,7 @@ export class AuthMidleware {
 
                 // get refresh token
                 const ip = req.socket.remoteAddress;
-                const refreshToken = await RedisAdapter.get(`RFT-${data.user_id}-${ip}`);
+                const refreshToken = await RedisAdapter.get(`RFT-${data._id}-${ip}`);
                 const isRefreshTokenExpired = isTokenExpried(refreshToken as string);
 
                 // check refresh token expired time
@@ -31,16 +31,15 @@ export class AuthMidleware {
                     await RedisAdapter.delete(`RFT-${data.user_id}-${ip}`);
 
                     req.headers.accessToken = null;
-                    
+
                     res.status(StatusCode.VERIFY_FAILED).json({
                         message: 'user needs to log in again!',
                     });
                 } else {
                     // create new access token
                     const newAccessToken = await Token.accessToken({
-                        user_id: data.user_id,
-                        user_name: data.user_name,
-                        remaining_lessions: data.remaining_lessions,
+                        _id: data.user_id,
+                        role: data.user_name,
                     });
 
                     req.headers.accessToken = newAccessToken;

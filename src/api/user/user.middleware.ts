@@ -5,7 +5,7 @@ import { StatusCode } from '@config/status-code';
 import { NextFunction, Request, Response } from 'express';
 
 export class UserMiddleware {
-    static async checkDuplicateSchedule(
+    static async checkAvailableSchedule(
         req: Request,
         res: Response,
         next: NextFunction,
@@ -13,9 +13,9 @@ export class UserMiddleware {
         try {
             const body = req.body as any;
 
-            const check = await UserService.checkDuplicateSchedule(body as IUserScheduled);
+            const check = await UserService.checkAvailableSchedule(body as IUserScheduled);
 
-            if (!check) throw new Error('user has been booked this time');
+            if (!check) throw new Error('This time is unavailable!');
             else next();
         } catch (error) {
             logger.error(error.message);

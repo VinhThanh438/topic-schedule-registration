@@ -1,4 +1,3 @@
-import logger from '@common/logger';
 import { UserService } from '@common/user/user.service';
 import { StatusCode } from '@config/status-code';
 import { NextFunction, Request, Response } from 'express';
@@ -17,7 +16,6 @@ export class ModMiddleware {
             if (!check) throw new Error('user has no lessions left!');
             else next();
         } catch (error) {
-            logger.error(error.message);
             res.status(StatusCode.REQUEST_FORBIDDEN).json({ message: error.message });
         }
     }

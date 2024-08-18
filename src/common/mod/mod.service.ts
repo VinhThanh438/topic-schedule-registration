@@ -3,6 +3,7 @@ import {
     IModCanceled,
     IModConfirm,
     IModCreate,
+    IModScheduleCanceled,
     IModSchedules,
     IModScheduling,
 } from './mod.interface';
@@ -15,9 +16,15 @@ import TopicScheduleRoom, {
     ITopicScheduleRoomResponse,
 } from '@common/topic-schedule-room/Topic-schedule-room.model';
 import { RoomStatus } from '@common/topic-schedule-room/topic-schedule-room-status';
-import { EVENT_TOPIC_ROOM_CANCELED } from '@common/constants/event.constant';
+import {
+    EVENT_CANCEL_AFTER_CONFIRMATION,
+    EVENT_MOD_CONFIRMED,
+    EVENT_MOD_SCHEDULE_CANCELED,
+    EVENT_TOPIC_ROOM_CANCELED,
+} from '@common/constants/event.constant';
 import User, { IUserResponse } from '@common/user/User.model';
 import { IUserEvent } from '@common/user/user.interface';
+import mongoose from 'mongoose';
 
 export class ModService {
     static async getOnlines(): Promise<any> {
@@ -62,28 +69,29 @@ export class ModService {
 
     static async confirmTopicScheduleRoom(req: IModConfirm): Promise<ITopicScheduleRoomResponse> {
         try {
-            const data = await TopicScheduleRoom.findOneAndUpdate(
+            const modScheduleData = await ModSchedule.findOneAndUpdate(
                 {
-                    _id: req.schedule_room_id,
-                    status: RoomStatus.PENDING,
+                    _id: req.mod_schedule_id,
+                    is_available: true,
                 },
-                {
-                    status: RoomStatus.MOD_CONFIRMED,
-                },
+                { is_available: false },
             );
 
-            if (!data)
-                throw new Error('cannot confirmed this schedule, topic_schedule_room not found!');
+            if (!modScheduleData) throw new Error('This schedule has been confirmed!');
             else {
-                const modScheduleData = await ModSchedule.findOneAndUpdate(
+                const data = await TopicScheduleRoom.findOneAndUpdate(
                     {
-                        _id: data.mod_schedule_id,
+                        _id: req.schedule_room_id,
+                        status: RoomStatus.PENDING,
                     },
-                    { is_available: false },
+                    {
+                        status: RoomStatus.MOD_CONFIRMED,
+                    },
                 );
 
-                if (!modScheduleData) throw new Error('modScheduleData is empty!');
-                else return data.transform();
+                eventBus.emit(EVENT_MOD_CONFIRMED, { mod_schedule_id: data.mod_schedule_id });
+
+                return data.transform();
             }
         } catch (error) {
             logger.error(error.message);
@@ -96,7 +104,31 @@ export class ModService {
             const data = await TopicScheduleRoom.findOneAndUpdate(
                 {
                     _id: req.schedule_room_id,
-                    status: { $in: [RoomStatus.PENDING, RoomStatus.MOD_CONFIRMED] },
+                    status: RoomStatus.MOD_CONFIRMED,
+                },
+                {
+                    status: RoomStatus.MOD_CANCELED,
+                },
+            );
+
+            if (!data)
+                throw new Error('cannot canceled this schedule, topic_schedule_room not found!');
+            else {
+                eventBus.emit(EVENT_CANCEL_AFTER_CONFIRMATION);
+                return data.transform();
+            }
+        } catch (error) {
+            logger.error(error.message);
+            throw new Error(error.message);
+        }
+    }
+
+    static async cancelConfirmation(req: IModCanceled): Promise<ITopicScheduleRoomResponse> {
+        try {
+            const data = await TopicScheduleRoom.findOneAndUpdate(
+                {
+                    _id: req.schedule_room_id,
+                    status: RoomStatus.PENDING,
                 },
                 {
                     status: RoomStatus.MOD_CANCELED,
@@ -141,11 +173,62 @@ export class ModService {
                 },
             );
 
-            if (data) return true;
-            else return false;
+            if (data) {
+                eventBus.emit(EVENT_MOD_SCHEDULE_CANCELED, {
+                    mod_schedule_id: req.mod_schedule_id,
+                });
+                return true;
+            }
+            return false;
         } catch (error) {
             logger.error(error.message);
             throw new Error(error.message);
+        }
+    }
+
+    static async modScheduleCanceledEvent(req: IModScheduleCanceled): Promise<void> {
+        const session = await mongoose.startSession()
+        try {
+            session.startTransaction()
+            const topicScheduleRooms = await TopicScheduleRoom.find({
+                mod_schedule_id: req.mod_schedule_id,
+                status: { $in: [RoomStatus.PENDING, RoomStatus.MOD_CONFIRMED] }
+            }).session(session);
+            
+            if (topicScheduleRooms.length === 0) {
+                session.endSession()
+                return
+            } else {
+                await TopicScheduleRoom.updateMany(
+                    {
+                        mod_schedule_id: req.mod_schedule_id,
+                        status: { $in: [RoomStatus.PENDING, RoomStatus.MOD_CONFIRMED] }
+                    },
+                    { $set: { status: RoomStatus.MOD_CANCELED } }
+                ).session(session);
+
+                const userIds = topicScheduleRooms.map(room => room.user_id);
+
+                await User.updateMany(
+                    {
+                        _id: { $in: userIds }
+                    },
+                    { $inc: { remaining_lessions: 1 } }
+                ).session(session);
+        
+                await session.commitTransaction();
+                session.endSession()
+
+                logger.info('Mod schedule canceled successfully!')
+            }
+        } catch (error) {
+            session.abortTransaction().catch(err => {
+                session.endSession()
+                throw new Error(err.message)
+            })
+            session.endSession()
+            logger.error(error.message);
+            throw error
         }
     }
 }

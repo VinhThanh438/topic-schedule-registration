@@ -1,10 +1,9 @@
-import { IUserResponse } from '@common/user/User.model';
 import jwt, { JwtPayload } from 'jsonwebtoken';
 import { ACCESSTOKEN_KEY, REFRESHTOKEN_KEY } from './environment';
-import { IToken } from './token.interface';
+import { IToken, ITokenResponse } from './token.interface';
 
 export class Token {
-    public static async getToken(data: IUserResponse): Promise<IToken> {
+    public static async getToken(data: ITokenResponse): Promise<IToken> {
         const accessToken = await Token.accessToken(data);
         const refreshToken = await Token.refreshToken(data);
 
@@ -14,12 +13,11 @@ export class Token {
         };
     }
 
-    public static async accessToken(data: IUserResponse) {
+    public static async accessToken(data: ITokenResponse) {
         return jwt.sign(
             {
-                user_id: data.user_id,
-                user_name: data.user_name,
-                remaining_lessions: data.remaining_lessions,
+                _id: data._id,
+                role: data.role,
             },
             ACCESSTOKEN_KEY,
             {
@@ -28,12 +26,11 @@ export class Token {
         );
     }
 
-    public static async refreshToken(data: IUserResponse) {
+    public static async refreshToken(data: ITokenResponse) {
         return jwt.sign(
             {
-                user_id: data.user_id,
-                user_name: data.user_name,
-                remaining_lessions: data.remaining_lessions,
+                _id: data._id,
+                role: data.role,
             },
             REFRESHTOKEN_KEY,
             {

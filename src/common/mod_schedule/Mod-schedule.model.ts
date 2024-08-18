@@ -13,7 +13,7 @@ export interface IModSchedule extends Document {
     mod_id: string;
     start_time: Date;
     end_time: Date;
-    is_available: boolean; // (true, false)
+    is_available: boolean;
     is_deleted: boolean;
 
     transform(): IModScheduleResponse;

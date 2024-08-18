@@ -1,20 +1,69 @@
-import { EVENT_TOPIC_ROOM_CANCELED } from '@common/constants/event.constant';
+import {
+    EVENT_CANCEL_AFTER_CONFIRMATION,
+    EVENT_MOD_CONFIRMED,
+    EVENT_MOD_SCHEDULE_CANCELED,
+    EVENT_TOPIC_ROOM_CANCELED,
+} from '@common/constants/event.constant';
 import eventBus from '@common/event-bus';
 import logger from '@common/logger';
-import { IModCanceled } from './mod.interface';
+import { IModCanceled, IModConfirm, IModScheduleCanceled } from './mod.interface';
 import { ModService } from './mod.service';
+import TopicScheduleRoom from '@common/topic-schedule-room/Topic-schedule-room.model';
+import { RoomStatus } from '@common/topic-schedule-room/topic-schedule-room-status';
+import { ModScheduleService } from '@common/mod_schedule/mod-schedule.service';
 
 export class ModEvent {
     public static register() {
-        eventBus.on(EVENT_TOPIC_ROOM_CANCELED, ModEvent.modCanceledHandler);
+        eventBus.on(EVENT_TOPIC_ROOM_CANCELED, ModEvent.modCanceledTopicScheduleRoomHandler);
+
+        eventBus.on(EVENT_MOD_CONFIRMED, ModEvent.modConfirmedHandler);
+
+        eventBus.on(EVENT_MOD_SCHEDULE_CANCELED, ModEvent.modScheduleCanceledHandler);
+
+        eventBus.on(EVENT_CANCEL_AFTER_CONFIRMATION, ModEvent.modCancelAfterConfirmation)
     }
 
-    // refund
-    public static async modCanceledHandler(data: IModCanceled): Promise<void> {
+    public static async modCanceledTopicScheduleRoomHandler(data: IModCanceled): Promise<void> {
         try {
-            const check = await ModService.lessionRefund(data as IModCanceled);
+            // Refund lession to the user
+            await ModService.lessionRefund(data as IModCanceled);
+        } catch (error) {
+            logger.error(error.message);
+        }
+    }
 
-            if (!check) logger.error('cannot update remaining_lessions. User not found!');
+    public static async modCancelAfterConfirmation(data: IModCanceled): Promise<void> {
+        try {
+            // Update is_available mod schedule
+            await ModScheduleService.updateAvailableSchedule(data as IModCanceled);
+
+            // Refund lession to the user
+            await ModService.lessionRefund(data as IModCanceled);
+        } catch (error) {
+            logger.error(error.message);
+        }
+    }
+
+    public static async modScheduleCanceledHandler(data: IModScheduleCanceled): Promise<void> {
+        try {
+            await ModService.modScheduleCanceledEvent(data as IModScheduleCanceled)
+        } catch (error) {
+            logger.error(error.message);
+        }
+    }
+
+    // auto cancel
+    public static async modConfirmedHandler(data: IModConfirm): Promise<void> {
+        try {
+            await TopicScheduleRoom.updateMany(
+                {
+                    mod_schedule_id: data.mod_schedule_id,
+                    status: RoomStatus.PENDING,
+                },
+                {
+                    status: RoomStatus.MOD_CANCELED,
+                },
+            );
         } catch (error) {
             logger.error(error.message);
         }

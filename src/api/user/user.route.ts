@@ -11,8 +11,8 @@ const router = express.Router();
 router.post(
     '/schedule',
     validate(userScheduled, { context: true }),
-    // Authentication.requireAuth,
-    // Authorization.requirePermission([Role.USER]),
+    Authentication.requireAuth,
+    Authorization.requirePermission([Role.USER]),
     UserMiddleware.checkAvailableSchedule,
     UserMiddleware.checkDuplicateSchedule,
     UserController.userScheduled,

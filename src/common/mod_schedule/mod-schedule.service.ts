@@ -1,8 +1,9 @@
 import logger from '@common/logger';
 import ModSchedule, { IModScheduleResponse } from './Mod-schedule.model';
+import { IModCanceled, IModScheduleCanceled } from '@common/mod/mod.interface';
 
 export class ModScheduleService {
-    static async updateAvailableSchedule(req: any): Promise<IModScheduleResponse> {
+    static async updateAvailableSchedule(req: IModCanceled): Promise<IModScheduleResponse> {
         try {
             const data = await ModSchedule.findOneAndUpdate(
                 {

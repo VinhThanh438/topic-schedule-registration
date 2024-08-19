@@ -3,7 +3,6 @@ import { StatusCode } from '@config/status-code';
 import { Request, Response } from 'express';
 import { UserService } from '@common/user/user.service';
 import { IUserCreate, IUserScheduled } from '@common/user/user.interface';
-import { ITopicScheduleRoom } from '@common/topic-schedule-room/Topic-schedule-room.model';
 
 export class UserController {
     static async createUser(req: Request, res: Response): Promise<void> {

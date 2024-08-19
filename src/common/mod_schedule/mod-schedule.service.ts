@@ -1,10 +1,10 @@
 import logger from '@common/logger';
-import ModSchedule from './Mod-schedule.model';
+import ModSchedule, { IModScheduleResponse } from './Mod-schedule.model';
 
 export class ModScheduleService {
-    static async updateAvailableSchedule(req: any): Promise<void> {
+    static async updateAvailableSchedule(req: any): Promise<IModScheduleResponse> {
         try {
-            const data = await ModSchedule.findByIdAndUpdate(
+            const data = await ModSchedule.findOneAndUpdate(
                 {
                     _id: req.mod_schedule_id,
                     is_available: false,
@@ -15,8 +15,10 @@ export class ModScheduleService {
             );
 
             if (!data) throw new Error('Cannot update available mod schedule!');
+            return data.transform();
         } catch (error) {
             logger.error(error.message);
+            throw error;
         }
     }
 }

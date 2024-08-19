@@ -12,7 +12,7 @@ export class RoomService {
             );
         } catch (error) {
             logger.error(error.message);
-            throw new Error(error.message);
+            throw error;
         }
     }
 }

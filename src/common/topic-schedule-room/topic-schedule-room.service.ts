@@ -13,6 +13,7 @@ export class TopicScheduleRoomService {
             return data;
         } catch (error) {
             logger.error(error.message);
+            throw error;
         }
     }
 }

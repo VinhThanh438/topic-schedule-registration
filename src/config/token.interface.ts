@@ -4,6 +4,6 @@ export interface IToken {
 }
 
 export interface ITokenResponse {
-    _id: string,
-    role: string
+    _id: string;
+    role: string;
 }

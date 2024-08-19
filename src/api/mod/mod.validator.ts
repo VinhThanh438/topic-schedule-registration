@@ -10,7 +10,7 @@ export const createModSchedule: schema = {
 
 export const handleTopicScheduleRoom: schema = {
     body: Joi.object({
-        mod_schedule_id: Joi.string().min(24).max(24),
+        mod_schedule_id: Joi.string().required().min(24).max(24),
         schedule_room_id: Joi.string().required().min(24).max(24),
     }),
 };

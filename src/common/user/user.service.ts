@@ -6,6 +6,8 @@ import TopicScheduleRoom, {
 } from '@common/topic-schedule-room/Topic-schedule-room.model';
 import ModSchedule from '@common/mod_schedule/Mod-schedule.model';
 import { RoomStatus } from '@common/topic-schedule-room/topic-schedule-room-status';
+import eventBus from '@common/event-bus';
+import { EVENT_TOPIC_ROOM_CANCELED } from '@common/constants/event.constant';
 
 export class UserService {
     static async createUser(req: IUserCreate): Promise<void> {
@@ -17,7 +19,7 @@ export class UserService {
             );
         } catch (error) {
             logger.error(error.message);
-            throw new Error(error.message);
+            throw error;
         }
     }
 
@@ -32,7 +34,7 @@ export class UserService {
             else return true;
         } catch (error) {
             logger.error(error.message);
-            throw new Error(error.message);
+            throw error;
         }
     }
 
@@ -46,7 +48,7 @@ export class UserService {
             return false;
         } catch (error) {
             logger.error(error.message);
-            throw new Error(error.message);
+            throw error;
         }
     }
 
@@ -72,7 +74,7 @@ export class UserService {
             }
         } catch (error) {
             logger.error(error.message);
-            throw new Error(error.message);
+            throw error;
         }
     }
 
@@ -86,10 +88,15 @@ export class UserService {
                     status: RoomStatus.USER_CANCELED,
                 },
             );
-            return data;
+            // return data;
+            if (data) {
+                eventBus.emit(EVENT_TOPIC_ROOM_CANCELED, { user_id: data.user_id });
+                return data;
+            }
+            throw new Error('Cannot canceled, TopicScheduleRoom not found!');
         } catch (error) {
             logger.error(error.message);
-            throw new Error(error.message);
+            throw error;
         }
     }
 }

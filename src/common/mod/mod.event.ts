@@ -20,7 +20,7 @@ export class ModEvent {
 
         eventBus.on(EVENT_MOD_SCHEDULE_CANCELED, ModEvent.modScheduleCanceledHandler);
 
-        eventBus.on(EVENT_CANCEL_AFTER_CONFIRMATION, ModEvent.modCancelAfterConfirmation)
+        eventBus.on(EVENT_CANCEL_AFTER_CONFIRMATION, ModEvent.modCancelAfterConfirmation);
     }
 
     public static async modCanceledTopicScheduleRoomHandler(data: IModCanceled): Promise<void> {
@@ -35,10 +35,16 @@ export class ModEvent {
     public static async modCancelAfterConfirmation(data: IModCanceled): Promise<void> {
         try {
             // Update is_available mod schedule
-            await ModScheduleService.updateAvailableSchedule(data as IModCanceled);
+            const checkData = await ModScheduleService.updateAvailableSchedule(
+                data as IModCanceled,
+            );
 
-            // Refund lession to the user
-            await ModService.lessionRefund(data as IModCanceled);
+            if (checkData) {
+                // Refund lession to the user
+                await ModService.lessionRefund(data as IModCanceled);
+            } else {
+                throw new Error('Cannot canceled!');
+            }
         } catch (error) {
             logger.error(error.message);
         }
@@ -46,7 +52,7 @@ export class ModEvent {
 
     public static async modScheduleCanceledHandler(data: IModScheduleCanceled): Promise<void> {
         try {
-            await ModService.modScheduleCanceledEvent(data as IModScheduleCanceled)
+            await ModService.modScheduleCanceledEvent(data as IModScheduleCanceled);
         } catch (error) {
             logger.error(error.message);
         }

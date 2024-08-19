@@ -8,9 +8,7 @@ import { Authorization } from '@api/auth/authorize.middleware';
 import { Role } from '@common/constants/role';
 const router = express.Router();
 
-router.get('/online', 
-    ModController.getOnlines
-);
+router.get('/online', ModController.getOnlines);
 
 router.get(
     '/schedule/:userid/:modid',

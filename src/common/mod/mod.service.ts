@@ -32,7 +32,7 @@ export class ModService {
             return await Mod.find({ status: ModStatus.ONLINE });
         } catch (error) {
             logger.error(error.message);
-            throw new Error(error.message);
+            throw error;
         }
     }
 
@@ -41,7 +41,7 @@ export class ModService {
             return await ModSchedule.find({ mod_id, is_deleted: false, is_available: true });
         } catch (error) {
             logger.error(error.message);
-            throw new Error(error.message);
+            throw error;
         }
     }
 
@@ -63,7 +63,7 @@ export class ModService {
             return result.getRawResponse();
         } catch (error) {
             logger.error(error.message);
-            throw new Error(error.message);
+            throw error;
         }
     }
 
@@ -95,7 +95,7 @@ export class ModService {
             }
         } catch (error) {
             logger.error(error.message);
-            throw new Error(error.message);
+            throw error;
         }
     }
 
@@ -119,7 +119,7 @@ export class ModService {
             }
         } catch (error) {
             logger.error(error.message);
-            throw new Error(error.message);
+            throw error;
         }
     }
 
@@ -143,7 +143,7 @@ export class ModService {
             }
         } catch (error) {
             logger.error(error.message);
-            throw new Error(error.message);
+            throw error;
         }
     }
 
@@ -158,7 +158,7 @@ export class ModService {
             else return userData.transform();
         } catch (error) {
             logger.error(error.message);
-            throw new Error(error.message);
+            throw error;
         }
     }
 
@@ -182,53 +182,53 @@ export class ModService {
             return false;
         } catch (error) {
             logger.error(error.message);
-            throw new Error(error.message);
+            throw error;
         }
     }
 
     static async modScheduleCanceledEvent(req: IModScheduleCanceled): Promise<void> {
-        const session = await mongoose.startSession()
+        const session = await mongoose.startSession();
         try {
-            session.startTransaction()
+            session.startTransaction();
             const topicScheduleRooms = await TopicScheduleRoom.find({
                 mod_schedule_id: req.mod_schedule_id,
-                status: { $in: [RoomStatus.PENDING, RoomStatus.MOD_CONFIRMED] }
+                status: { $in: [RoomStatus.PENDING, RoomStatus.MOD_CONFIRMED] },
             }).session(session);
-            
+
             if (topicScheduleRooms.length === 0) {
-                session.endSession()
-                return
+                session.endSession();
+                return;
             } else {
                 await TopicScheduleRoom.updateMany(
                     {
                         mod_schedule_id: req.mod_schedule_id,
-                        status: { $in: [RoomStatus.PENDING, RoomStatus.MOD_CONFIRMED] }
+                        status: { $in: [RoomStatus.PENDING, RoomStatus.MOD_CONFIRMED] },
                     },
-                    { $set: { status: RoomStatus.MOD_CANCELED } }
+                    { $set: { status: RoomStatus.MOD_CANCELED } },
                 ).session(session);
 
-                const userIds = topicScheduleRooms.map(room => room.user_id);
+                const userIds = topicScheduleRooms.map((room) => room.user_id);
 
                 await User.updateMany(
                     {
-                        _id: { $in: userIds }
+                        _id: { $in: userIds },
                     },
-                    { $inc: { remaining_lessions: 1 } }
+                    { $inc: { remaining_lessions: 1 } },
                 ).session(session);
-        
-                await session.commitTransaction();
-                session.endSession()
 
-                logger.info('Mod schedule canceled successfully!')
+                await session.commitTransaction();
+                session.endSession();
+
+                logger.info('Mod schedule canceled successfully!');
             }
         } catch (error) {
-            session.abortTransaction().catch(err => {
-                session.endSession()
-                throw new Error(err.message)
-            })
-            session.endSession()
+            session.abortTransaction().catch((err) => {
+                session.endSession();
+                throw new Error(err.message);
+            });
+            session.endSession();
             logger.error(error.message);
-            throw error
+            throw error;
         }
     }
 }

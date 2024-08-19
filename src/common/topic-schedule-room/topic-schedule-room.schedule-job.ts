@@ -5,6 +5,8 @@ import { CRON_TIME } from '@common/constants/cron-job.constant';
 import { RoomStatus } from './topic-schedule-room-status';
 import { QueueService } from '@common/queue/queue.service';
 import { CREATE_ROOM_AFTER_CONFIRMATION } from '@common/constants/job.constant';
+import eventBus from '@common/event-bus';
+import { EVENT_TOPIC_ROOM_CANCELED } from '@common/constants/event.constant';
 
 export class TopicRoomSheduleJob {
     public static register() {
@@ -15,6 +17,7 @@ export class TopicRoomSheduleJob {
 
     public static async handler(): Promise<void> {
         try {
+            // check and create room
             const queue = await QueueService.getQueue(CREATE_ROOM_AFTER_CONFIRMATION);
 
             const currentTime = new Date();
@@ -43,7 +46,7 @@ export class TopicRoomSheduleJob {
                 {
                     // conditions
                     $match: {
-                        status: RoomStatus.MOD_CONFIRMED,
+                        status: { $in: [RoomStatus.MOD_CONFIRMED, RoomStatus.PENDING] },
                         'mod_schedule.start_time': {
                             // start_time - 2 mins <= current time -> start_time <= current_time + 2 mins
                             $lt: new Date(
@@ -71,12 +74,21 @@ export class TopicRoomSheduleJob {
             else {
                 // add queue
                 data.map(async (element) => {
-                    await TopicScheduleRoom.findByIdAndUpdate(element._id, {
-                        status: RoomStatus.SYSTEM_CONFIRMED,
-                    });
-                    queue.add({ schedule_room_id: element._id.toString() });
+                    if (element.status === RoomStatus.MOD_CONFIRMED) {
+                        await TopicScheduleRoom.findByIdAndUpdate(element._id, {
+                            status: RoomStatus.SYSTEM_CONFIRMED,
+                        });
+                        queue.add({ schedule_room_id: element._id.toString() });
+                    } else if (element.status === RoomStatus.PENDING) {
+                        await TopicScheduleRoom.findByIdAndUpdate(element._id, {
+                            status: RoomStatus.SYSTEM_CANCELED,
+                        });
+                        eventBus.emit(EVENT_TOPIC_ROOM_CANCELED, {user_id: element.user_id})
+                    }
                 });
             }
+
+            // check and cancel pending
         } catch (error) {
             logger.error(error.message);
         }

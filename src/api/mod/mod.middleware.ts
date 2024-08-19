@@ -1,6 +1,7 @@
 import { UserService } from '@common/user/user.service';
 import { StatusCode } from '@config/status-code';
 import { NextFunction, Request, Response } from 'express';
+import jwt, { JwtPayload } from 'jsonwebtoken';
 
 export class ModMiddleware {
     static async checkRemainingLessions(
@@ -9,7 +10,9 @@ export class ModMiddleware {
         next: NextFunction,
     ): Promise<void> {
         try {
-            const userId = req.params.userid;
+            const accessToken = req.headers.accessToken as string
+            const decode = jwt.decode(accessToken) as JwtPayload
+            const userId = decode._id
 
             const check = await UserService.checkRemainingLession(userId as string);
 

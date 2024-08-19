@@ -11,7 +11,7 @@ const router = express.Router();
 router.get('/online', ModController.getOnlines);
 
 router.get(
-    '/schedule/:userid/:modid',
+    '/schedule/:modid',
     Authentication.requireAuth,
     Authorization.requirePermission([Role.USER]),
     ModMiddleware.checkRemainingLessions,

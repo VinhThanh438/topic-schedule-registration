@@ -47,6 +47,9 @@ export class ModController {
 
             const data = await ModService.modScheduled(body as IModScheduling);
 
+            if(data.insertedIds.length === 0) 
+                throw new Error('Mod has been scheduled this time!') 
+            
             res.status(StatusCode.CREATED).json({ message: 'success', data });
         } catch (error) {
             res.status(StatusCode.REQUEST_FORBIDDEN).json({ error: error.message });

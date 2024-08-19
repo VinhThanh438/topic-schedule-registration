@@ -193,19 +193,19 @@ export class ModService {
             const topicScheduleRooms = await TopicScheduleRoom.find({
                 mod_schedule_id: req.mod_schedule_id,
                 status: { $in: [RoomStatus.PENDING, RoomStatus.MOD_CONFIRMED] },
-            }).session(session);
-
+            })
+            
             if (topicScheduleRooms.length === 0) {
                 session.endSession();
                 return;
             } else {
-                await TopicScheduleRoom.updateMany(
+                const data = await TopicScheduleRoom.updateMany(
                     {
                         mod_schedule_id: req.mod_schedule_id,
                         status: { $in: [RoomStatus.PENDING, RoomStatus.MOD_CONFIRMED] },
                     },
                     { $set: { status: RoomStatus.MOD_CANCELED } },
-                ).session(session);
+                );
 
                 const userIds = topicScheduleRooms.map((room) => room.user_id);
 
@@ -214,7 +214,7 @@ export class ModService {
                         _id: { $in: userIds },
                     },
                     { $inc: { remaining_lessions: 1 } },
-                ).session(session);
+                );
 
                 await session.commitTransaction();
                 session.endSession();

@@ -2,6 +2,7 @@ import routes from '@api/router';
 import express, { Express, NextFunction, Request, Response } from 'express';
 import bodyParser from 'body-parser';
 import { ValidationError } from 'express-validation';
+import { StatusCode } from '@config/status-code';
 
 export class ExpressServer {
     private server?: Express;
@@ -35,7 +36,7 @@ export class ExpressServer {
     private setupErrorHandler(server: Express) {
         server.use((err: Error, req: Request, res: Response, next: NextFunction) => {
             if (err instanceof ValidationError) return res.status(err.statusCode).json(err);
-            return res.status(500).json(err);
+            return res.status(StatusCode.SERVER_ERROR).json(err);
         });
     }
 }

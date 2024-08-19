@@ -128,7 +128,7 @@ export class ModService {
             const data = await TopicScheduleRoom.findOneAndUpdate(
                 {
                     _id: req.schedule_room_id,
-                    status: RoomStatus.PENDING,
+                    status: RoomStatus.MOD_CONFIRMED,
                 },
                 {
                     status: RoomStatus.MOD_CANCELED,

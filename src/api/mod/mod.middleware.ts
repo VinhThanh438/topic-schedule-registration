@@ -10,9 +10,9 @@ export class ModMiddleware {
         next: NextFunction,
     ): Promise<void> {
         try {
-            const accessToken = req.headers.accessToken as string
-            const decode = jwt.decode(accessToken) as JwtPayload
-            const userId = decode._id
+            const accessToken = req.headers.accessToken as string;
+            const decode = jwt.decode(accessToken) as JwtPayload;
+            const userId = decode._id;
 
             const check = await UserService.checkRemainingLession(userId as string);
 

@@ -1,4 +1,10 @@
-import { IModCanceled, IModConfirm, IModCreate, IModSchedules, IModScheduling } from '@common/mod/mod.interface';
+import {
+    IModCanceled,
+    IModConfirm,
+    IModCreate,
+    IModSchedules,
+    IModScheduling,
+} from '@common/mod/mod.interface';
 import { ModService } from '@common/mod/mod.service';
 import { StatusCode } from '@config/status-code';
 import { Request, Response } from 'express';
@@ -47,9 +53,8 @@ export class ModController {
 
             const data = await ModService.modScheduled(body as IModScheduling);
 
-            if(data.insertedIds.length === 0) 
-                throw new Error('Mod has been scheduled this time!') 
-            
+            if (data.insertedIds.length === 0) throw new Error('Mod has been scheduled this time!');
+
             res.status(StatusCode.CREATED).json({ message: 'success', data });
         } catch (error) {
             res.status(StatusCode.REQUEST_FORBIDDEN).json({ error: error.message });

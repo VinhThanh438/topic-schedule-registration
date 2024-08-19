@@ -83,7 +83,7 @@ export class TopicRoomSheduleJob {
                         await TopicScheduleRoom.findByIdAndUpdate(element._id, {
                             status: RoomStatus.SYSTEM_CANCELED,
                         });
-                        eventBus.emit(EVENT_TOPIC_ROOM_CANCELED, {user_id: element.user_id})
+                        eventBus.emit(EVENT_TOPIC_ROOM_CANCELED, { user_id: element.user_id });
                     }
                 });
             }

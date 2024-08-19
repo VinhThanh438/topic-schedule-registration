@@ -12,7 +12,7 @@
 -   Mod đặt lịch: Hệ thống chỉ cho phép Mod đặt các lịch không bị trùng thời gian với các lịch đã đặt.
 -   Hiển thị các Mod đang online cho User
 -   Hiển thị các lịch available của Mod đã nếu User vẫn còn số buổi học
--   User đặt lịch: Hệ thống sẽ kiểm tra lịch của Mod còn available không, nếu còn -> cho phép User đặt lịch và trừ đi một buổi học của User và chờ Mod xác nhận
+-   User đặt lịch: Hệ thống sẽ kiểm tra lịch của Mod còn available không và kiểm tra xem User đã đặt lịch nào trùng thời gian đặt lịch chưa, nếu còn -> cho phép User đặt lịch và trừ đi một buổi học của User và chờ Mod xác nhận
 -   User hủy lịch: Hệ thống sẽ xác nhận là User hủy lịch và cộng lại số buổi họ cho User
 -   Mod hủy buổi học của User: Hệ thống sẽ xác nhận Mod đã hủy và hoàn trả buổi học cho user
 -   Mod xác nhận buổi học của User: Hệ thống sẽ xác nhận buổi học của User và khóa lịch của mod đã confirm

@@ -13,5 +13,5 @@ export interface IUserEvent {
 }
 
 export interface IUserCanceled {
-    topic_schedule_id: string
+    topic_schedule_id: string;
 }

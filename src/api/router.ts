@@ -9,8 +9,8 @@ router.use('/mod', modRoutes);
 router.all('*', (req: Request, res: Response, next: NextFunction) => {
     res.status(StatusCode.REQUEST_NOT_FOUND).json({
         message: `Failed to request: ${req.originalUrl}`,
-        method: req.method
-    })
-})
+        method: req.method,
+    });
+});
 
 export default router;

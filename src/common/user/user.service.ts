@@ -52,6 +52,45 @@ export class UserService {
         }
     }
 
+    static async checkDuplicateSchedule(req: IUserScheduled): Promise<Boolean> {
+        try {
+            const modScheduleId = req.mod_schedule_id;
+
+            const modSchdeduleData = await ModSchedule.findById(modScheduleId);
+
+            const data = await TopicScheduleRoom.aggregate([
+                {
+                    // convert mod_schedule_id from string to object id
+                    $addFields: {
+                        mod_schedule_id: { $toObjectId: '$mod_schedule_id' },
+                    },
+                },
+                {
+                    $lookup: {
+                        from: 'modschedules',
+                        localField: 'mod_schedule_id',
+                        foreignField: '_id',
+                        as: 'mod_schedule',
+                    },
+                },
+                { $unwind: '$mod_schedule' },
+                // parse data in mod_schedule field from array to object
+                {
+                    // conditions
+                    $match: {
+                        user_id: req.user_id,
+                        'mod_schedule.start_time': modSchdeduleData.start_time,
+                    },
+                },
+            ]);
+            if (data.length === 0) return true;
+            return false;
+        } catch (error) {
+            logger.error(error.message);
+            throw error;
+        }
+    }
+
     static async userScheduled(req: IUserScheduled): Promise<ITopicScheduleRoom> {
         try {
             const userData = await User.findOneAndUpdate(

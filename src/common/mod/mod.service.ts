@@ -193,8 +193,8 @@ export class ModService {
             const topicScheduleRooms = await TopicScheduleRoom.find({
                 mod_schedule_id: req.mod_schedule_id,
                 status: { $in: [RoomStatus.PENDING, RoomStatus.MOD_CONFIRMED] },
-            })
-            
+            });
+
             if (topicScheduleRooms.length === 0) {
                 session.endSession();
                 return;

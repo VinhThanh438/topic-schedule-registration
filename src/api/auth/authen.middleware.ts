@@ -28,7 +28,7 @@ export class Authentication {
 
                 // check refresh token expired time
                 if (isRefreshTokenExpired) {
-                    await RedisAdapter.delete(`RFT-${data.user_id}-${ip}`);
+                    await RedisAdapter.delete(`RFT-${data._id}-${ip}`);
 
                     req.headers.accessToken = null;
 
@@ -38,8 +38,8 @@ export class Authentication {
                 } else {
                     // create new access token
                     const newAccessToken = await Token.accessToken({
-                        _id: data.user_id,
-                        role: data.user_name,
+                        _id: data._id,
+                        role: data.role,
                     });
 
                     req.headers.accessToken = newAccessToken;

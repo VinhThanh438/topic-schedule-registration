@@ -104,7 +104,7 @@ export class ModService {
             const data = await TopicScheduleRoom.findOneAndUpdate(
                 {
                     _id: req.schedule_room_id,
-                    status: RoomStatus.MOD_CONFIRMED,
+                    status: RoomStatus.PENDING,
                 },
                 {
                     status: RoomStatus.MOD_CANCELED,
@@ -114,7 +114,7 @@ export class ModService {
             if (!data)
                 throw new Error('cannot canceled this schedule, topic_schedule_room not found!');
             else {
-                eventBus.emit(EVENT_CANCEL_AFTER_CONFIRMATION);
+                eventBus.emit(EVENT_TOPIC_ROOM_CANCELED);
                 return data.transform();
             }
         } catch (error) {
@@ -138,7 +138,7 @@ export class ModService {
             if (!data)
                 throw new Error('cannot canceled this schedule, topic_schedule_room not found!');
             else {
-                eventBus.emit(EVENT_TOPIC_ROOM_CANCELED, { user_id: data.user_id });
+                eventBus.emit(EVENT_CANCEL_AFTER_CONFIRMATION, { user_id: data.user_id });
                 return data.transform();
             }
         } catch (error) {

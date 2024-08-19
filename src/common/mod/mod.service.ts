@@ -36,7 +36,7 @@ export class ModService {
         }
     }
 
-    static async getModeSchedules(mod_id: IModSchedules): Promise<any> {
+    static async getModeSchedules(mod_id: string): Promise<any> {
         try {
             return await ModSchedule.find({ mod_id, is_deleted: false, is_available: true });
         } catch (error) {

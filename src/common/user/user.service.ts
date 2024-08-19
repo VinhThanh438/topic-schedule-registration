@@ -1,5 +1,5 @@
 import logger from '@common/logger';
-import { IUserCreate, IUserScheduled } from './user.interface';
+import { IUserCanceled, IUserCreate, IUserScheduled } from './user.interface';
 import User from './User.model';
 import TopicScheduleRoom, {
     ITopicScheduleRoom,
@@ -78,7 +78,7 @@ export class UserService {
         }
     }
 
-    static async cancelSchedule(req: any): Promise<ITopicScheduleRoom> {
+    static async cancelSchedule(req: IUserCanceled): Promise<ITopicScheduleRoom> {
         try {
             const data = await TopicScheduleRoom.findOneAndUpdate(
                 {

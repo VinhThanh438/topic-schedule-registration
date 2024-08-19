@@ -11,3 +11,7 @@ export interface IUserScheduled {
 export interface IUserEvent {
     user_id: string;
 }
+
+export interface IUserCanceled {
+    topic_schedule_id: string
+}

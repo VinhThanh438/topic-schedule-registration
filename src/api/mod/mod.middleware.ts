@@ -11,7 +11,7 @@ export class ModMiddleware {
         try {
             const userId = req.params.userid;
 
-            const check = await UserService.checkRemainingLession(userId as any);
+            const check = await UserService.checkRemainingLession(userId as string);
 
             if (!check) throw new Error('user has no lessions left!');
             else next();

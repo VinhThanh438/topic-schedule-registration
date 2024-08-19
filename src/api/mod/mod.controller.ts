@@ -1,4 +1,4 @@
-import { IModConfirm, IModCreate, IModSchedules, IModScheduling } from '@common/mod/mod.interface';
+import { IModCanceled, IModConfirm, IModCreate, IModSchedules, IModScheduling } from '@common/mod/mod.interface';
 import { ModService } from '@common/mod/mod.service';
 import { StatusCode } from '@config/status-code';
 import { Request, Response } from 'express';
@@ -23,7 +23,7 @@ export class ModController {
         try {
             const mod_id = req.params.modid;
 
-            let data = await ModService.getModeSchedules(mod_id as any);
+            let data = await ModService.getModeSchedules(mod_id as string);
 
             if (data.length === 0)
                 res.status(StatusCode.REQUEST_NOT_FOUND).json({
@@ -71,7 +71,7 @@ export class ModController {
         try {
             const body = req.body as any;
 
-            const data = await ModService.cancelTopicScheduleRoom(body as any);
+            const data = await ModService.cancelTopicScheduleRoom(body as IModCanceled);
 
             res.status(StatusCode.CREATED).json({
                 message: 'Mod canceled successfully!',
@@ -86,7 +86,7 @@ export class ModController {
         try {
             const body = req.body as any;
 
-            const data = await ModService.cancelConfirmation(body as any);
+            const data = await ModService.cancelConfirmation(body as IModCanceled);
 
             res.status(StatusCode.CREATED).json({
                 message: 'Mod canceled successfully!',

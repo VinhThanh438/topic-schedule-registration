@@ -2,7 +2,7 @@ import { Schema, model, Document } from 'mongoose';
 import { ModStatus } from './mod-status';
 import { Role } from '@common/constants/role';
 
-interface IModResponse {
+export interface IModResponse {
     mod_id: string;
     mod_name: string;
     role: string;

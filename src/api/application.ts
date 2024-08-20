@@ -5,6 +5,7 @@ import { RedisAdapter } from '@common/infrastructure/redis.adapter';
 import { UserEvent } from '@common/user/user.event';
 import { ModEvent } from '@common/mod/mod.event';
 import { TopicRoomSheduleJob } from '@common/topic-schedule-room/topic-schedule-room.schedule-job';
+import { AuthEvent } from '@common/auth/auth.event';
 
 export class Application {
     public static async createApp(): Promise<ExpressServer> {
@@ -23,6 +24,7 @@ export class Application {
     public static registerEvent() {
         UserEvent.register();
         ModEvent.register();
+        AuthEvent.register();
     }
 
     public static registerScheduleJob() {

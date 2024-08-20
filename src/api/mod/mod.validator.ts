@@ -3,7 +3,7 @@ import { Joi, schema } from 'express-validation';
 export const createModSchedule: schema = {
     body: Joi.object({
         mod_id: Joi.string().required().min(24).max(24),
-        type: Joi.string().required(),
+        type: Joi.string().required().valid('M', 'A', 'E'),
         date: Joi.string().required(),
     }),
 };

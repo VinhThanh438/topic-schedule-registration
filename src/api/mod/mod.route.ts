@@ -3,8 +3,8 @@ import { ModController } from './mod.controller';
 import { ModMiddleware } from './mod.middleware';
 import { validate } from 'express-validation';
 import { cancelSchedule, createModSchedule, handleTopicScheduleRoom } from './mod.validator';
-import { Authentication } from '@api/auth/authen.middleware';
-import { Authorization } from '@api/auth/authorize.middleware';
+import { Authentication } from '@api/auth/authentication.middleware';
+import { Authorization } from '@api/auth/authorization.middleware';
 import { Role } from '@common/constants/role';
 const router = express.Router();
 

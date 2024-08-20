@@ -3,8 +3,8 @@ import { UserController } from './user.controller';
 import { UserMiddleware } from './user.middleware';
 import { validate } from 'express-validation';
 import { userCanceled, userScheduled } from './user.validator';
-import { Authentication } from '@api/auth/authen.middleware';
-import { Authorization } from '@api/auth/authorize.middleware';
+import { Authentication } from '@api/auth/authentication.middleware';
+import { Authorization } from '@api/auth/authorization.middleware';
 import { Role } from '@common/constants/role';
 const router = express.Router();
 

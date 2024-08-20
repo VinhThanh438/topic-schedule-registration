@@ -11,7 +11,8 @@ export class Authorization {
 
             if (role.includes(data.role)) next();
 
-            res.status(StatusCode.REQUEST_UNAUTHORIZED).json({
+            else 
+                res.status(StatusCode.REQUEST_UNAUTHORIZED).json({
                 message: `You don't have permission to use this resource!`,
             });
         };

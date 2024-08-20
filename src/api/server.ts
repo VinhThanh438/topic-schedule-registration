@@ -14,6 +14,7 @@ export class ExpressServer {
 
         this.configBodyParser(server);
         this.setupRatelimitingMiddleware(server);
+        this.setupSecurityMiddlewares(server);
         this.useRoute(server);
         this.setupErrorHandler(server);
         this.listen(server, port);

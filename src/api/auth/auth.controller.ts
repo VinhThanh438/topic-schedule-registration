@@ -32,7 +32,6 @@ export class AuthController {
                     message: 'Registed successfully!',
                     data,
                 });
-            res.send(body);
         } catch (error) {
             res.status(StatusCode.SERVER_ERROR).json({ message: error.message });
         }

@@ -13,8 +13,8 @@ export class Authorization {
 
             else 
                 res.status(StatusCode.REQUEST_UNAUTHORIZED).json({
-                message: `You don't have permission to use this resource!`,
-            });
+                    message: `You don't have permission to use this resource!`,
+                });
         };
     }
 }

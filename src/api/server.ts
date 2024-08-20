@@ -36,6 +36,7 @@ export class ExpressServer {
     }
 
     public setupSecurityMiddlewares(app: Express) {
+        app.set('trust proxy', true);
         app.use(helmet());
         app.use(helmet.referrerPolicy({ policy: 'same-origin' }));
         app.disable('x-powered-by');

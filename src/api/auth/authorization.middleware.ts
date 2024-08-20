@@ -10,8 +10,7 @@ export class Authorization {
             const data = jwt.decode(accessToken) as JwtPayload;
 
             if (role.includes(data.role)) next();
-
-            else 
+            else
                 res.status(StatusCode.REQUEST_UNAUTHORIZED).json({
                     message: `You don't have permission to use this resource!`,
                 });

@@ -4,6 +4,7 @@ import bodyParser from 'body-parser';
 import { ValidationError } from 'express-validation';
 import { StatusCode } from '@config/status-code';
 import helmet from 'helmet';
+import limiter from '@config/rate-limit';
 
 export class ExpressServer {
     private server?: Express;
@@ -12,11 +13,16 @@ export class ExpressServer {
         const server = express();
 
         this.configBodyParser(server);
+        this.setupRatelimitingMiddleware(server);
         this.useRoute(server);
         this.setupErrorHandler(server);
         this.listen(server, port);
 
         return this.server;
+    }
+
+    public setupRatelimitingMiddleware(app: Express) {
+        app.use(limiter);
     }
 
     public useRoute(app: Express) {
@@ -30,7 +36,7 @@ export class ExpressServer {
 
     public setupSecurityMiddlewares(app: Express) {
         app.use(helmet());
-        app.use(helmet.referrerPolicy({ policy: 'same-origin' }))
+        app.use(helmet.referrerPolicy({ policy: 'same-origin' }));
         app.disable('x-powered-by');
     }
 

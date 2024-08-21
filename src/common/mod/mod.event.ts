@@ -2,11 +2,12 @@ import {
     EVENT_CANCEL_AFTER_CONFIRMATION,
     EVENT_MOD_CONFIRMED,
     EVENT_MOD_SCHEDULE_CANCELED,
+    EVENT_MOD_SCHEDULED,
     EVENT_TOPIC_ROOM_CANCELED,
 } from '@common/constants/event.constant';
 import eventBus from '@common/event-bus';
 import logger from '@common/logger';
-import { IModCanceled, IModConfirm, IModScheduleCanceled } from './mod.interface';
+import { IModCanceled, IModConfirm, IModScheduleCanceled, IModScheduling } from './mod.interface';
 import { ModService } from './mod.service';
 import TopicScheduleRoom from '@common/topic-schedule-room/Topic-schedule-room.model';
 import { RoomStatus } from '@common/topic-schedule-room/topic-schedule-room-status';
@@ -21,6 +22,16 @@ export class ModEvent {
         eventBus.on(EVENT_MOD_SCHEDULE_CANCELED, ModEvent.modScheduleCanceledHandler);
 
         eventBus.on(EVENT_CANCEL_AFTER_CONFIRMATION, ModEvent.modCancelAfterConfirmation);
+
+        eventBus.on(EVENT_MOD_SCHEDULED, ModEvent.saveCachingData);
+    }
+
+    public static async saveCachingData(data: IModScheduling): Promise<void> {
+        try {
+            await ModService.saveCachingData(data);
+        } catch (error) {
+            logger.error(error.message);
+        }
     }
 
     public static async modCanceledTopicScheduleRoomHandler(data: IModCanceled): Promise<void> {

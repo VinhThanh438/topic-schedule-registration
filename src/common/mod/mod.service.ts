@@ -2,7 +2,6 @@ import { GenerateTime } from '@common/utils/generate-time';
 import {
     IModCanceled,
     IModConfirm,
-    IModCreate,
     IModScheduleCanceled,
     IModSchedules,
     IModScheduling,
@@ -11,7 +10,7 @@ import Mod from './Mod.model';
 import logger from '@common/logger';
 import eventBus from '@common/event-bus';
 import { ModStatus } from './mod-status';
-import ModSchedule from '@common/mod_schedule/Mod-schedule.model';
+import ModSchedule, { IModScheduleResponse } from '@common/mod_schedule/Mod-schedule.model';
 import TopicScheduleRoom, {
     ITopicScheduleRoomResponse,
 } from '@common/topic-schedule-room/Topic-schedule-room.model';
@@ -20,11 +19,13 @@ import {
     EVENT_CANCEL_AFTER_CONFIRMATION,
     EVENT_MOD_CONFIRMED,
     EVENT_MOD_SCHEDULE_CANCELED,
+    EVENT_MOD_SCHEDULED,
     EVENT_TOPIC_ROOM_CANCELED,
 } from '@common/constants/event.constant';
 import User, { IUserResponse } from '@common/user/User.model';
 import { IUserEvent } from '@common/user/user.interface';
 import mongoose from 'mongoose';
+import { RedisAdapter } from '@common/infrastructure/redis.adapter';
 
 export class ModService {
     static async getOnlines(): Promise<any> {
@@ -38,7 +39,20 @@ export class ModService {
 
     static async getModeSchedules(mod_id: string): Promise<any> {
         try {
-            return await ModSchedule.find({ mod_id, is_deleted: false, is_available: true });
+            const retrieveDataFromCache = await RedisAdapter.get(`mod-schedule-${mod_id}`);
+            
+            if (retrieveDataFromCache) {
+                const parseData = RedisAdapter.deserialize(retrieveDataFromCache)
+                return parseData;
+            } else {
+                let getDataFromApi = await ModSchedule.find({
+                    mod_id,
+                    is_deleted: false,
+                    is_available: true,
+                });
+                const transformedData = getDataFromApi.map((element) => element.transform());
+                return transformedData;
+            }
         } catch (error) {
             logger.error(error.message);
             throw error;
@@ -59,6 +73,8 @@ export class ModService {
             }));
 
             const result = await ModSchedule.bulkWrite(bulkOperations);
+
+            eventBus.emit(EVENT_MOD_SCHEDULED, { mod_id: req.mod_id });
 
             return result.getRawResponse();
         } catch (error) {
@@ -90,6 +106,8 @@ export class ModService {
                 );
 
                 eventBus.emit(EVENT_MOD_CONFIRMED, { mod_schedule_id: data.mod_schedule_id });
+
+                eventBus.emit(EVENT_MOD_SCHEDULED, { mod_id: data.mod_id });
 
                 return data.transform();
             }
@@ -188,6 +206,7 @@ export class ModService {
 
     static async modScheduleCanceledEvent(req: IModScheduleCanceled): Promise<void> {
         const session = await mongoose.startSession();
+
         try {
             session.startTransaction();
             const topicScheduleRooms = await TopicScheduleRoom.find({
@@ -199,7 +218,7 @@ export class ModService {
                 session.endSession();
                 return;
             } else {
-                const data = await TopicScheduleRoom.updateMany(
+                await TopicScheduleRoom.updateMany(
                     {
                         mod_schedule_id: req.mod_schedule_id,
                         status: { $in: [RoomStatus.PENDING, RoomStatus.MOD_CONFIRMED] },
@@ -228,6 +247,25 @@ export class ModService {
             });
             session.endSession();
             logger.error(error.message);
+            throw error;
+        }
+    }
+
+    static async saveCachingData(data: IModScheduling): Promise<void> {
+        try {
+            let modScheduleData = await ModSchedule.find({
+                mod_id: data.mod_id,
+                is_deleted: false,
+                is_available: true,
+            });
+
+            const transformedData: IModScheduleResponse[] = modScheduleData.map((element) =>
+                element.transform(),
+            );
+
+            await RedisAdapter.set(`mod-schedule-${data.mod_id}`, RedisAdapter.serialize(transformedData));
+        } catch (error) {
+            logger.error(error);
             throw error;
         }
     }

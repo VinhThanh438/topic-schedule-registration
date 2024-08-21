@@ -1,3 +1,5 @@
+import { EVENT_MOD_SCHEDULED } from '@common/constants/event.constant';
+import eventBus from '@common/event-bus';
 import {
     IModCanceled,
     IModConfirm,
@@ -29,14 +31,12 @@ export class ModController {
         try {
             const mod_id = req.params.modid;
 
-            let data = await ModService.getModeSchedules(mod_id as string);
+            const data = await ModService.getModeSchedules(mod_id as string);
 
             if (data.length === 0)
                 res.status(StatusCode.REQUEST_NOT_FOUND).json({
                     message: 'cannot found mod schedule',
                 });
-
-            data = data.map((element) => (element = element.transform()));
 
             res.status(StatusCode.OK).json({
                 message: 'success!',
@@ -54,6 +54,9 @@ export class ModController {
             const data = await ModService.modScheduled(body as IModScheduling);
 
             if (data.upserted.length === 0) throw new Error('Mod has been scheduled this time!');
+
+            // store in redis caching
+            eventBus.emit(EVENT_MOD_SCHEDULED, body as IModScheduling);
 
             res.status(StatusCode.CREATED).json({ message: 'success', data: data.upserted });
         } catch (error) {

@@ -7,3 +7,5 @@ export const EVENT_MOD_SCHEDULE_CANCELED = 'event-mod-schedule-canceled';
 export const EVENT_CANCEL_AFTER_CONFIRMATION = 'event-mod-schedule-canceled';
 
 export const EVENT_LOGIN = 'even-user-login';
+
+export const EVENT_MOD_SCHEDULED = 'event-mod-scheduled';

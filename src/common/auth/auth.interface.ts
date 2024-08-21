@@ -5,7 +5,7 @@ export interface IAuth {
 }
 
 export interface IAuthEvent {
-    _id: string;
+    id: string;
     ip: string;
     refreshToken: string;
 }

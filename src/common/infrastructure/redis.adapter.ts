@@ -55,6 +55,15 @@ export class RedisAdapter {
         return tmp;
     }
 
+    static async disconnect(): Promise<void> {
+        logger.info('Closing redis connection...');
+        try {
+            await Promise.all(RedisAdapter.allClients.map((client) => client.quit()));
+        } catch (error) {
+            logger.error('Closing redis connection error!', error);
+        }
+    }
+
     static createClient(options = {}): Redis {
         const tmp = new ioredis(REDIS_URI, {
             maxRetriesPerRequest: 10,

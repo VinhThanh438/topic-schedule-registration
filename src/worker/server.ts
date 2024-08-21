@@ -1,5 +1,6 @@
 import { Queue } from 'bull';
 import { Router } from './router';
+import logger from '@common/logger';
 
 export class WorkerServer {
     private queues: Queue[];
@@ -8,6 +9,14 @@ export class WorkerServer {
         await this.registerQueues();
         return;
     }
+
+    public async kill(): Promise<unknown> {
+        const promises = this.queues.map((queue) =>
+            queue.close(false).catch((e) => logger.error('Error closing queue', e)),
+        );
+        return Promise.all(promises);
+    }
+
 
     private async registerQueues(): Promise<void> {
         this.queues = await Router.register();

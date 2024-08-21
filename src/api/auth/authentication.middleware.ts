@@ -42,7 +42,7 @@ export class Authentication {
                         role: data.role,
                     });
 
-                    req.headers.accessToken = newAccessToken;
+                    req.headers.accesstoken = newAccessToken;
 
                     next();
                 }

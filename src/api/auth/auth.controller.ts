@@ -43,7 +43,7 @@ export class AuthController {
         try {
             const accessToken = req.headers.accesstoken as string
             const decode = jwt.decode(accessToken) as JwtPayload
-            const ip = req.socket.address
+            const ip = req.ip
 
             // remove refresh token
             await RedisAdapter.delete(`RFT-${decode._id}-${ip}`)

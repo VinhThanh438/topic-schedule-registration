@@ -36,4 +36,15 @@ export class AuthController {
             res.status(StatusCode.SERVER_ERROR).json({ message: error.message });
         }
     }
+
+    static async logOut(req: Request, res: Response): Promise<void> {
+        try {
+            req.headers.accessToken = null;
+            res.status(StatusCode.OK).json({
+                message: 'loged out sucessfully!',
+            });
+        } catch (error) {
+            res.status(StatusCode.SERVER_ERROR).json(error);
+        }
+    }
 }

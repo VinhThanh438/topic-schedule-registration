@@ -17,7 +17,6 @@ export class WorkerServer {
         return Promise.all(promises);
     }
 
-
     private async registerQueues(): Promise<void> {
         this.queues = await Router.register();
     }

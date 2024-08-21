@@ -80,6 +80,7 @@ export class UserService {
                     $match: {
                         user_id: req.user_id,
                         'mod_schedule.start_time': modSchdeduleData.start_time,
+                        status: { $in: [RoomStatus.PENDING, RoomStatus.MOD_CONFIRMED] },
                     },
                 },
             ]);

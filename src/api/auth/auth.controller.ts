@@ -1,7 +1,7 @@
 import { IAuth } from '@common/auth/auth.interface';
 import { AuthService } from '@common/auth/auth.service';
 import { RedisAdapter } from '@common/infrastructure/redis.adapter';
-import jwt, { JwtPayload } from 'jsonwebtoken'
+import jwt, { JwtPayload } from 'jsonwebtoken';
 import { StatusCode } from '@config/status-code';
 import { NextFunction, Request, Response } from 'express';
 
@@ -41,12 +41,12 @@ export class AuthController {
 
     static async logOut(req: Request, res: Response): Promise<void> {
         try {
-            const accessToken = req.headers.accesstoken as string
-            const decode = jwt.decode(accessToken) as JwtPayload
-            const ip = req.ip
+            const accessToken = req.headers.accesstoken as string;
+            const decode = jwt.decode(accessToken) as JwtPayload;
+            const ip = req.ip;
 
             // remove refresh token
-            await RedisAdapter.delete(`RFT-${decode._id}-${ip}`)
+            await RedisAdapter.delete(`RFT-${decode._id}-${ip}`);
 
             // remove access token
             req.headers.accesstoken = null;

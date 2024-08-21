@@ -13,7 +13,7 @@ export class Application {
 
         await server.setup();
 
-        Application.handleExit(server)
+        Application.handleExit(server);
 
         return;
     }

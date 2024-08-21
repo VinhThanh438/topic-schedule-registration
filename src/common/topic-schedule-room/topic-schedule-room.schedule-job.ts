@@ -48,7 +48,7 @@ export class TopicRoomSheduleJob {
                     $match: {
                         status: { $in: [RoomStatus.MOD_CONFIRMED, RoomStatus.PENDING] },
                         'mod_schedule.start_time': {
-                            // start_time - 2 mins <= current time -> start_time <= current_time + 2 mins
+                            // start_time - 2 mins < current time -> start_time < current_time + 2 mins
                             $lt: new Date(
                                 new Date(
                                     currentTimeAdjusted.getTime() + 2 * 60 * 1000,

@@ -5,9 +5,11 @@ import { ValidationError } from 'express-validation';
 import { StatusCode } from '@config/status-code';
 import helmet from 'helmet';
 import limiter from '@config/rate-limit';
+import { Server } from 'http';
 
 export class ExpressServer {
     private server?: Express;
+    private httpServer: Server;
 
     public async setup(port: number): Promise<Express> {
         const server = express();
@@ -52,6 +54,22 @@ export class ExpressServer {
         app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
             if (err instanceof ValidationError) return res.status(err.statusCode).json(err);
             return res.status(StatusCode.SERVER_ERROR).json(err);
+        });
+    }
+
+    public async kill(): Promise<void> {
+        return new Promise((resolve, reject) => {
+            if (this.httpServer) {
+                this.httpServer.close((err) => {
+                    if (err) {
+                        reject(err);
+                    } else {
+                        resolve();
+                    }
+                });
+            } else {
+                resolve();
+            }
         });
     }
 }

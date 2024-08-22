@@ -11,7 +11,7 @@ export class AuthEvent {
 
     public static async handler(data: IAuthEvent): Promise<void> {
         try {
-            await RedisAdapter.set(`RFT-${data.id}-${data.ip}`, data.refreshToken, 5000);
+            await RedisAdapter.set(`RFT-${data.id}-${data.ip}`, data.refreshToken);
             logger.info('Refresh token has been stored in redis');
         } catch (error) {
             logger.error(error.message);

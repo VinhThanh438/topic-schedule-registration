@@ -1,16 +1,16 @@
-import { RedisAdapter } from '@common/infrastructure/redis.adapter';
 import { StatusCode } from '@config/status-code';
+import { NextFunction, Request, Response } from 'express';
+import { RedisAdapter } from '@common/infrastructure/redis.adapter';
 import { isTokenExpried, Token } from '@config/token';
-import { Request, Response, NextFunction } from 'express';
 import jwt, { JwtPayload } from 'jsonwebtoken';
 
-export class Authentication {
+export class AuthMiddleware {
     public static async requireAuth(req: Request, res: Response, next: NextFunction) {
         try {
             const accessToken = req.headers.accesstoken as string;
 
             if (!accessToken) {
-                res.status(StatusCode.SERVER_AUTH_ERROR).json({
+                res.status(StatusCode.REQUEST_UNAUTHORIZED).json({
                     message: 'token is missing',
                 });
             }
@@ -32,7 +32,7 @@ export class Authentication {
 
                     req.headers.accessToken = null;
 
-                    res.status(StatusCode.VERIFY_FAILED).json({
+                    res.status(StatusCode.REQUEST_FORBIDDEN).json({
                         message: 'user needs to log in again!',
                     });
                 } else {
@@ -52,5 +52,19 @@ export class Authentication {
         } catch (error) {
             next(error);
         }
+    }
+
+    public static requirePermission(role: string[]) {
+        return (req: Request, res: Response, next: NextFunction) => {
+            const accessToken = req.headers.accesstoken as string;
+
+            const data = jwt.decode(accessToken) as JwtPayload;
+
+            if (role.includes(data.role)) next();
+            else
+                res.status(StatusCode.REQUEST_FORBIDDEN).json({
+                    message: `You don't have permission to use this resource!`,
+                });
+        };
     }
 }

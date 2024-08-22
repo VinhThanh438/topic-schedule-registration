@@ -1,3 +1,4 @@
+import { Role } from '@common/constants/role';
 import { Joi, schema } from 'express-validation';
 
 export const auth: schema = {
@@ -6,6 +7,6 @@ export const auth: schema = {
         password: Joi.string()
             .required()
             .regex(/[a-zA-Z0-9]{3,30}/),
-        role: Joi.string().required().valid('user', 'mod'),
+        role: Joi.string().required().valid(Role.USER, Role.MOD),
     }),
 };

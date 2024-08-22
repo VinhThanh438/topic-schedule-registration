@@ -6,6 +6,7 @@ import { StatusCode } from '@config/status-code';
 import helmet from 'helmet';
 import limiter from '@config/rate-limit';
 import { Server } from 'http';
+import { ROOT_ROUTE } from '@config/environment';
 
 export class ExpressServer {
     private server?: Express;
@@ -29,7 +30,7 @@ export class ExpressServer {
     }
 
     public useRoute(app: Express) {
-        app.use(routes);
+        app.use(ROOT_ROUTE, routes);
     }
 
     public configBodyParser(app: Express) {
@@ -38,7 +39,6 @@ export class ExpressServer {
     }
 
     public setupSecurityMiddlewares(app: Express) {
-        app.set('trust proxy', true);
         app.use(helmet());
         app.use(helmet.referrerPolicy({ policy: 'same-origin' }));
         app.disable('x-powered-by');

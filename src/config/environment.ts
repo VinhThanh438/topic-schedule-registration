@@ -8,6 +8,8 @@ dotenv.config({
 
 export const PORT: number = parseInt(process.env.PORT, 10) || 3000;
 
+export const ROOT_ROUTE = process.env.ROOT_ROUTE;
+
 export const MONGO_URI = process.env.MONGO_URI;
 
 export const REDIS_URI = process.env.REDIS_URI;

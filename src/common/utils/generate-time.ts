@@ -1,3 +1,4 @@
+import { ModScheduleTypes } from '@common/constants/mod-schedule-types';
 import { IGenerateTime } from './generate-time.interface';
 
 export class GenerateTime {
@@ -20,7 +21,7 @@ export class GenerateTime {
     static generate(): IGenerateTime[] {
         const dateString = GenerateTime.date.toISOString().slice(0, 10);
         switch (GenerateTime.type) {
-            case 'M': {
+            case ModScheduleTypes.MORNING: {
                 const result: IGenerateTime[] = [];
                 for (let hour = 8; hour <= 11; hour++) {
                     for (let minute = 0; minute < 60; minute += 30) {
@@ -36,7 +37,7 @@ export class GenerateTime {
                 return result;
             }
 
-            case 'A': {
+            case ModScheduleTypes.AFTERNOON: {
                 const result: IGenerateTime[] = [];
                 for (let hour = 14; hour <= 17; hour++) {
                     for (let minute = 0; minute < 60; minute += 30) {
@@ -52,7 +53,7 @@ export class GenerateTime {
                 return result;
             }
 
-            case 'E': {
+            case ModScheduleTypes.EVENING: {
                 const result: IGenerateTime[] = [];
                 for (let hour = 19; hour <= 22; hour++) {
                     for (let minute = 0; minute < 60; minute += 30) {

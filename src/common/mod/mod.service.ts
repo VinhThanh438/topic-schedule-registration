@@ -40,9 +40,9 @@ export class ModService {
     static async getModeSchedules(mod_id: string): Promise<any> {
         try {
             const retrieveDataFromCache = await RedisAdapter.get(`mod-schedule-${mod_id}`);
-            
+
             if (retrieveDataFromCache) {
-                const parseData = RedisAdapter.deserialize(retrieveDataFromCache)
+                const parseData = RedisAdapter.deserialize(retrieveDataFromCache);
                 return parseData;
             } else {
                 let getDataFromApi = await ModSchedule.find({
@@ -50,7 +50,9 @@ export class ModService {
                     is_deleted: false,
                     is_available: true,
                 });
+
                 const transformedData = getDataFromApi.map((element) => element.transform());
+
                 return transformedData;
             }
         } catch (error) {
@@ -209,6 +211,7 @@ export class ModService {
 
         try {
             session.startTransaction();
+
             const topicScheduleRooms = await TopicScheduleRoom.find({
                 mod_schedule_id: req.mod_schedule_id,
                 status: { $in: [RoomStatus.PENDING, RoomStatus.MOD_CONFIRMED] },
@@ -245,7 +248,9 @@ export class ModService {
                 session.endSession();
                 throw new Error(err.message);
             });
+
             session.endSession();
+            
             logger.error(error.message);
             throw error;
         }
@@ -263,7 +268,10 @@ export class ModService {
                 element.transform(),
             );
 
-            await RedisAdapter.set(`mod-schedule-${data.mod_id}`, RedisAdapter.serialize(transformedData));
+            await RedisAdapter.set(
+                `mod-schedule-${data.mod_id}`,
+                RedisAdapter.serialize(transformedData),
+            );
         } catch (error) {
             logger.error(error);
             throw error;

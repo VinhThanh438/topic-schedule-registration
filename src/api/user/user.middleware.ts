@@ -15,10 +15,9 @@ export class UserMiddleware {
 
             const check = await UserService.checkAvailableSchedule(body as IUserScheduled);
 
-            if (!check) throw new Error('This time is unavailable!');
+            if (!check) throw new Error('Unavailable schedule!');
             else next();
         } catch (error) {
-            logger.error(error.message);
             res.status(StatusCode.REQUEST_FORBIDDEN).json({ message: error.message });
         }
     }
@@ -33,10 +32,9 @@ export class UserMiddleware {
 
             const check = await UserService.checkDuplicateSchedule(body as IUserScheduled);
 
-            if (!check) throw new Error('This time is unavailable!');
+            if (!check) throw new Error('Unavailable schedule!');
             else next();
         } catch (error) {
-            logger.error(error.message);
             res.status(StatusCode.REQUEST_FORBIDDEN).json({ message: error.message });
         }
     }

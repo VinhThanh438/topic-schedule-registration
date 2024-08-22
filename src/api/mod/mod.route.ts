@@ -3,58 +3,58 @@ import { ModController } from './mod.controller';
 import { ModMiddleware } from './mod.middleware';
 import { validate } from 'express-validation';
 import { cancelSchedule, createModSchedule, handleTopicScheduleRoom } from './mod.validator';
-import { Authentication } from '@api/auth/authentication.middleware';
-import { Authorization } from '@api/auth/authorization.middleware';
+import { AuthMiddleware } from '@api/auth/auth.middleware';
 import { Role } from '@common/constants/role';
+
 const router = express.Router();
 
 router.get('/online', ModController.getOnlines);
 
 router.get(
     '/schedule/:modid',
-    Authentication.requireAuth,
-    Authorization.requirePermission([Role.USER]),
+    AuthMiddleware.requireAuth,
+    AuthMiddleware.requirePermission([Role.USER]),
     ModMiddleware.checkRemainingLessions,
     ModController.getModSchedules,
 );
 
 router.post(
     '/schedule',
+    AuthMiddleware.requireAuth,
+    AuthMiddleware.requirePermission([Role.MOD]),
     validate(createModSchedule, { context: true }),
-    Authentication.requireAuth,
-    Authorization.requirePermission([Role.MOD]),
     ModController.modScheduled,
 );
 
 router.post(
     '/topic-schedule-room/confirm',
+    AuthMiddleware.requireAuth,
+    AuthMiddleware.requirePermission([Role.MOD]),
     validate(handleTopicScheduleRoom, { context: true }),
-    Authentication.requireAuth,
-    Authorization.requirePermission([Role.MOD]),
     ModController.confirmTopicScheduleRoom,
 );
 
 router.post(
     '/topic-schedule-room/cancel',
+    AuthMiddleware.requireAuth,
+    AuthMiddleware.requirePermission([Role.MOD]),
     validate(handleTopicScheduleRoom, { context: true }),
-    Authentication.requireAuth,
-    Authorization.requirePermission([Role.MOD]),
     ModController.cancelTopicScheduleRoom,
 );
 
 router.post(
     '/topic-schedule-room/cancel-confirmation',
+    AuthMiddleware.requireAuth,
+    AuthMiddleware.requirePermission([Role.MOD]),
     validate(handleTopicScheduleRoom, { context: true }),
-    Authentication.requireAuth,
-    Authorization.requirePermission([Role.MOD]),
     ModController.cancelConfirmation,
 );
 
 router.post(
     '/schedule/cancel',
+    AuthMiddleware.requireAuth,
+    AuthMiddleware.requirePermission([Role.MOD]),
     validate(cancelSchedule, { context: true }),
-    Authentication.requireAuth,
-    Authorization.requirePermission([Role.MOD]),
     ModController.cancelModSchedule,
 );
 

@@ -250,7 +250,7 @@ export class ModService {
             });
 
             session.endSession();
-            
+
             logger.error(error.message);
             throw error;
         }

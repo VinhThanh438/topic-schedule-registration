@@ -7,24 +7,19 @@ import { QueueService } from '@common/queue/queue.service';
 import { CREATE_ROOM_AFTER_CONFIRMATION } from '@common/constants/job.constant';
 import eventBus from '@common/event-bus';
 import { EVENT_TOPIC_ROOM_CANCELED } from '@common/constants/event.constant';
+import { getCurrentTimeAdjusted } from '@common/utils/get-current-time';
 
 export class TopicRoomSheduleJob {
     public static register() {
-        logger.info('Processing schedule job: create room after mod confirmed');
+        logger.info('Processing schedule job: create room after mod confirmed...');
 
-        schedule.scheduleJob(CRON_TIME, this.handler);
+        schedule.scheduleJob(CRON_TIME, this.topicRoomScheduleJobhandler);
     }
 
-    public static async handler(): Promise<void> {
+    private static async topicRoomScheduleJobhandler(): Promise<void> {
         try {
             // check and create room
             const queue = await QueueService.getQueue(CREATE_ROOM_AFTER_CONFIRMATION);
-
-            const currentTime = new Date();
-            const offsetInMinutes = currentTime.getTimezoneOffset();
-            const currentTimeAdjusted = new Date(
-                currentTime.getTime() - offsetInMinutes * 60 * 1000,
-            );
 
             const data = await TopicScheduleRoom.aggregate([
                 {
@@ -51,24 +46,13 @@ export class TopicRoomSheduleJob {
                             // start_time - 2 mins < current time -> start_time < current_time + 2 mins
                             $lt: new Date(
                                 new Date(
-                                    currentTimeAdjusted.getTime() + 2 * 60 * 1000,
+                                    getCurrentTimeAdjusted().getTime() + 2 * 60 * 1000,
                                 ).toISOString(),
                             ),
                         },
                     },
                 },
             ]);
-
-            // console.log(data);
-            // console.log(
-            //     'start_time: ',
-            //     data[0].mod_schedule.start_time.getTime() - 7 * 60 * 60 * 1000 - 2 * 60 * 1000,
-            //     data[0].mod_schedule.start_time,
-            // );
-            // console.log('current_time', currentTime.getTime(), currentTimeAdjusted);
-            // console.log(
-            //     new Date(new Date(currentTimeAdjusted.getTime() + 2 * 60 * 1000).toISOString()),
-            // );
 
             if (data.length === 0) return;
             else {
@@ -91,6 +75,7 @@ export class TopicRoomSheduleJob {
             // check and cancel pending
         } catch (error) {
             logger.error(error.message);
+            throw error;
         }
     }
 }

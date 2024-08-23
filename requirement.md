@@ -20,3 +20,4 @@
 -   Mod huỷ lịch đã đặt: Hệ thống cập nhật trạng thái xóa của lịch và hoàn trả lại các buổi học cho các User đã đặt vào lịch (cả đã xác nhận và chưa xác nhận)
 -   Hệ thống sẽ kiểm tra tình trạng đặt lịch và tạo phòng trước 2 phút khi phòng học bắt đầu.
 -   Hệ thống sẽ tự động hủy lịch của User nếu không được Mod xác nhận trước 2 phút khi buôi học bắt đầu
+-   Hệ thống tự động cập nhật lại trạng thái lịch mod đã đặt nếu như không có user nào đặt lịch đó trước thời điểm vào học 15p

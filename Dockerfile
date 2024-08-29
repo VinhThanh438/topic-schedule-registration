@@ -20,7 +20,7 @@ EXPOSE 3000
 CMD [ "npm", "start" ]
 
 
-FROM base as worker
+FROM api as worker
 
 WORKDIR /app
 

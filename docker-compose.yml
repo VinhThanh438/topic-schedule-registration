@@ -43,6 +43,7 @@ services:
       - common
     ports:
       - 3000:3000
+    restart: always
 
   booking-worker:
     image: app-worker
@@ -61,11 +62,12 @@ services:
     depends_on:
       - mongo
       - redis
+    restart: always
 
 networks:
     common:
       name: common
-      driver: bridge
+      driver: bridge # default network
 
 volumes:
     mongo_data:
@@ -75,3 +77,5 @@ volumes:
       driver: local
       name: mongo_log
     redis_data:
+      driver: local
+      name: redis_data
